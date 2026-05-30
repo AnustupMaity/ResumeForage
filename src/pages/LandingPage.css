@@ -1,16 +1,16 @@
 /* ===== Landing Page Styles ===== */
 
 .landing {
-  --space-3xl: 48px;
-  --space-2xl: 32px;
-  --space-xl: 24px;
+  --space-3xl: 32px;
+  --space-2xl: 24px;
+  --space-xl: 16px;
 }
 
 /* --- Scroll Animations --- */
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(40px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .reveal.reveal-visible {
   opacity: 1;
@@ -20,7 +20,7 @@
 /* --- Hero --- */
 .hero {
   position: relative;
-  min-height: 75vh;
+  min-height: 60vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -137,7 +137,7 @@
 /* --- Features --- */
 .features-section {
   background: var(--bg-secondary);
-  padding: var(--space-3xl) 0;
+  padding: var(--space-2xl) 0;
 }
 .features-grid {
   display: grid;
@@ -179,7 +179,7 @@
 
 /* --- Pricing --- */
 .pricing-section {
-  padding: var(--space-3xl) 0;
+  padding: var(--space-2xl) 0;
   background: var(--bg-primary);
   border-top: 1px solid var(--border-subtle);
 }
@@ -253,7 +253,7 @@
 
 /* --- How It Works --- */
 .how-section {
-  padding: var(--space-3xl) 0;
+  padding: var(--space-2xl) 0;
   background: var(--bg-secondary);
 }
 .steps-grid {

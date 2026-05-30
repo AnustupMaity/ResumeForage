@@ -360,16 +360,21 @@ p {
 }
 
 .navbar-brand {
-  font-family: var(--font-display);
+  font-family: var(--font-dot);
   font-size: 1.4rem;
-  font-weight: 800;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-weight: 400;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.dot-font {
+  font-family: var(--font-dot);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 .navbar-nav {

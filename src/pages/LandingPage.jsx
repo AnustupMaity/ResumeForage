@@ -14,10 +14,10 @@ export default function LandingPage() {
         }
       });
     }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
-    
+
     const elements = document.querySelectorAll('.reveal');
     elements.forEach(el => observer.observe(el));
-    
+
     return () => observer.disconnect();
   }, []);
 
@@ -199,10 +199,10 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="footer-bottom">
-            <p>© {new Date().getFullYear()} ResumeForge. Built with ❤️</p>
+            <p>© {new Date().getFullYear()} ResumeForge. </p>
             <p className="footer-dev">Developed by Anustup Maity</p>
             <div className="footer-contact">
-              <a href="mailto:contact@example.com"><i className="fas fa-envelope"></i> Email</a>
+              <a href="mailto:anustupmaity2004@gmail.com"><i className="fas fa-envelope"></i> Email</a>
               <a href="https://github.com/AnustupMaity" target="_blank" rel="noopener noreferrer"><i className="fab fa-github"></i> GitHub</a>
             </div>
           </div>
