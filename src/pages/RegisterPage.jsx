@@ -58,7 +58,7 @@ export default function RegisterPage() {
   return (
     <div className="auth-page">
       <div className="auth-card glass-card">
-        <h2>Create Account</h2>
+        <h2 className="dot-font">Create Account</h2>
         <p className="auth-subtitle">Start building your professional resume today</p>
 
         {error && (

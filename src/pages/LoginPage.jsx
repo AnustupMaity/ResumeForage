@@ -59,7 +59,7 @@ export default function LoginPage() {
   return (
     <div className="auth-page">
       <div className="auth-card glass-card">
-        <h2>Welcome Back</h2>
+        <h2 className="dot-font">Welcome Back</h2>
         <p className="auth-subtitle">Sign in to continue building your resume</p>
         
         {error && (
