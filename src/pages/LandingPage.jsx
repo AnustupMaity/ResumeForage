@@ -64,8 +64,8 @@ export default function LandingPage() {
             </div>
             <div className="stat-divider"></div>
             <div className="stat">
-              <span className="stat-number dot-font">ZERO</span>
-              <span className="stat-label">Hidden Fees</span>
+              <span className="stat-number dot-font">₹5</span>
+              <span className="stat-label">For 1 Year</span>
             </div>
           </div>
         </div>
@@ -114,21 +114,21 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Open Source */}
-      <section className="pricing-section" id="pricing">
+      {/* Pricing */}
+      <section className="pricing-section reveal" id="pricing">
         <div className="page-container">
           <div className="section-header reveal">
-            <p className="overline">100% Free</p>
-            <h2 className="dot-font">OPEN ACCESS. NO HIDDEN FEES.</h2>
-            <p>Get full access to all features completely free.</p>
+            <p className="overline">Simple Pricing</p>
+            <h2 className="dot-font">ONE PLAN. NO HIDDEN FEES.</h2>
+            <p>Get full access for an entire year at one low price</p>
           </div>
           <div className="pricing-card glass-card reveal">
-            <div className="pricing-popular">Free Forever</div>
-            <h3 className="dot-font">All Features Included</h3>
+            <div className="pricing-popular">Most Popular</div>
+            <h3 className="dot-font">Annual Access</h3>
             <div className="pricing-amount">
               <span className="currency">₹</span>
-              <span className="price dot-font">0</span>
-              <span className="period">/ always</span>
+              <span className="price dot-font">5</span>
+              <span className="period">/ year</span>
             </div>
             <ul className="pricing-features">
               <li><span className="dot-indicator-small"></span> Professional LaTeX-style template</li>
@@ -138,7 +138,7 @@ export default function LandingPage() {
               <li><span className="dot-indicator-small"></span> AI-powered content generation</li>
               <li><span className="dot-indicator-small"></span> Smart text/PDF import</li>
               <li><span className="dot-indicator-small"></span> Secure cloud storage</li>
-              <li><span className="dot-indicator-small"></span> No credit card required</li>
+              <li><span className="dot-indicator-small"></span> UPI payment — instant & easy</li>
             </ul>
             <Link to="/register" className="btn btn-primary btn-lg" style={{ width: '100%' }}>
               [ START BUILDING ]
@@ -163,8 +163,8 @@ export default function LandingPage() {
             <div className="step-connector"><i className="fas fa-arrow-right"></i></div>
             <div className="step-card reveal">
               <div className="step-number dot-font">02</div>
-              <h4>Live Preview</h4>
-              <p>Watch your resume format perfectly in real-time as you enter your details.</p>
+              <h4>Preview & Pay</h4>
+              <p>Preview your professionally formatted resume. Pay ₹5 via UPI to unlock downloads.</p>
             </div>
             <div className="step-connector"><i className="fas fa-arrow-right"></i></div>
             <div className="step-card reveal">

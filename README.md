@@ -4,7 +4,7 @@ ResumeForge is an open-source, minimalist, and highly functional resume builder 
 
 ## Core Features
 
-- **100% Free & Open Source**: No hidden fees, no subscriptions. Everything is available for free.
+- **Simple Pricing**: Just ₹5 for an entire year of unlimited edits and PDF downloads.
 - **AI-Powered Extraction**: Automatically extracts your skills, experience, and education from unstructured text or uploaded PDF resumes.
 - **Live Preview Editor**: Watch your resume format perfectly in real-time as you enter your details.
 - **ATS-Friendly PDF Export**: Generate clean, professional PDFs based on industry-standard LaTeX styling.
