@@ -27,7 +27,7 @@ export default function PaymentPage() {
       <div className="auth-page">
         <div className="glass-card" style={{ maxWidth: 500, textAlign: 'center', padding: '48px 32px' }}>
           <div className="success-icon"><i className="fas fa-check-circle"></i></div>
-          <h2>Subscription Active!</h2>
+          <h2 className="dot-font">Subscription Active!</h2>
           <p style={{ margin: '16px 0 24px' }}>Your annual subscription is active. You have full access to download your resume as PDF.</p>
           <button className="btn btn-primary btn-lg" onClick={() => navigate('/editor')}>
             <i className="fas fa-edit"></i> Go to Editor
@@ -42,7 +42,7 @@ export default function PaymentPage() {
       <div className="auth-page">
         <div className="glass-card" style={{ maxWidth: 500, textAlign: 'center', padding: '48px 32px' }}>
           <div className="pending-icon"><i className="fas fa-clock"></i></div>
-          <h2>Payment Submitted!</h2>
+          <h2 className="dot-font">Payment Submitted!</h2>
           <p style={{ margin: '16px 0 8px' }}>Your payment is being verified. This usually takes a few hours.</p>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Transaction ID: <strong>{transactionId}</strong></p>
           <div style={{ marginTop: '24px', display: 'flex', gap: '12px', justifyContent: 'center' }}>
@@ -111,7 +111,7 @@ export default function PaymentPage() {
   return (
     <div className="auth-page">
       <div className="payment-card glass-card">
-        <h2>Complete Payment</h2>
+        <h2 className="dot-font">Complete Payment</h2>
         <p className="auth-subtitle">Pay ₹{AMOUNT} to unlock PDF downloads for 1 year</p>
 
         <div className="payment-steps">

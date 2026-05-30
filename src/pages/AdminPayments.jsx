@@ -100,7 +100,7 @@ export default function AdminPayments() {
     <div className="admin-page">
       <div className="page-container">
         <div className="dashboard-header animate-fade-in-up">
-          <h2><i className="fas fa-shield-alt"></i> Admin Panel</h2>
+          <h2 className="dot-font"><i className="fas fa-shield-alt"></i> Admin Panel</h2>
           <p>Manage payment verifications and user subscriptions.</p>
         </div>
 

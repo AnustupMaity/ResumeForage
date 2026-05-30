@@ -166,7 +166,7 @@ export default function SupportPage() {
     <div className="admin-page">
       <div className="page-container">
         <div className="dashboard-header animate-fade-in-up">
-          <h2><i className="fas fa-headset"></i> Support Center</h2>
+          <h2 className="dot-font"><i className="fas fa-headset"></i> Support Center</h2>
           <p>Report issues, track payment status, and connect with admin.</p>
         </div>
 

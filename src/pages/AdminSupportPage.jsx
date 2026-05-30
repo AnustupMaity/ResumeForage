@@ -102,7 +102,7 @@ export default function AdminSupportPage() {
       <div className="page-container">
         <div className="dashboard-header animate-fade-in-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2><i className="fas fa-headset"></i> Support Tickets Manager</h2>
+            <h2 className="dot-font"><i className="fas fa-headset"></i> Support Tickets Manager</h2>
             <p>View user issues, bugs, and respond to queries.</p>
           </div>
         </div>

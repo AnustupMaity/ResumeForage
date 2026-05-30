@@ -301,7 +301,7 @@ export default function ResumeEditor() {
       {/* Left panel - Form */}
       <div className={`editor-panel ${showPreview ? 'hide-mobile' : ''}`}>
         <div className="editor-toolbar">
-          <h3><i className="fas fa-edit"></i> Resume Editor</h3>
+          <h3 className="dot-font"><i className="fas fa-edit"></i> Resume Editor</h3>
           <div className="toolbar-actions">
             <button className="btn btn-icon btn-secondary" onClick={undo} disabled={historyIndex <= 0} title="Undo">
               <i className="fas fa-undo"></i>

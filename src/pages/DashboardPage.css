@@ -1,10 +1,9 @@
 /* ===== Dashboard Page Styles ===== */
 
 .dashboard-page {
-  background:
-    radial-gradient(ellipse at 20% 20%, rgba(108, 99, 255, 0.06) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 80%, rgba(0, 212, 170, 0.04) 0%, transparent 50%),
-    var(--bg-primary);
+  background: var(--bg-primary);
+  background-image: radial-gradient(var(--border-subtle) 1px, transparent 1px);
+  background-size: 20px 20px;
   min-height: calc(100vh - 65px);
 }
 

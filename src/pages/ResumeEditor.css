@@ -31,11 +31,18 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  flex-shrink: 0;
+  margin-right: var(--space-md);
 }
 
 .toolbar-actions {
   display: flex;
   gap: var(--space-sm);
+  overflow-x: auto;
+  align-items: center;
+  padding-bottom: 4px;
+  flex: 1;
+  justify-content: flex-end;
 }
 
 /* Section tabs */
@@ -58,7 +65,9 @@
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   color: var(--text-muted);
-  font-family: var(--font-sans);
+  font-family: var(--font-dot);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
@@ -150,7 +159,7 @@
 /* --- Right Panel (Preview) --- */
 .preview-panel {
   overflow-y: auto;
-  background: #1a1a2e;
+  background: var(--bg-secondary);
 }
 
 /* --- Mobile Preview Toggle --- */

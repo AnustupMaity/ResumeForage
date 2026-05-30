@@ -80,7 +80,7 @@ export default function AdminDashboard() {
         {/* --- PERSONAL ADMIN DASHBOARD WIDGETS --- */}
         <div className="dashboard-header animate-fade-in-up">
           <div>
-            <h2>Welcome, {currentUser?.displayName || 'ADMIN'}! 👋</h2>
+            <h2 className="dot-font">Welcome, {currentUser?.displayName || 'ADMIN'}! 👋</h2>
             <p>Manage your resume and subscription.</p>
           </div>
         </div>
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
         
         <div className="dashboard-header animate-fade-in-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <h2><i className="fas fa-chart-pie"></i> Platform Overview</h2>
+            <h2 className="dot-font"><i className="fas fa-chart-pie"></i> Platform Overview</h2>
             <p>High-level statistics of ResumeForge platform.</p>
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
