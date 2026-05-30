@@ -1,16 +1,31 @@
-# React + Vite
+# ResumeForge
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ResumeForge is an open-source, minimalist, and highly functional resume builder application. It features a modern, tech-oriented UI inspired by "Nothing OS" and is designed to help you create ATS-friendly, LaTeX-style resumes in minutes.
 
-Currently, two official plugins are available:
+## Core Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **100% Free & Open Source**: No hidden fees, no subscriptions. Everything is available for free.
+- **AI-Powered Extraction**: Automatically extracts your skills, experience, and education from unstructured text or uploaded PDF resumes.
+- **Live Preview Editor**: Watch your resume format perfectly in real-time as you enter your details.
+- **ATS-Friendly PDF Export**: Generate clean, professional PDFs based on industry-standard LaTeX styling.
+- **Smart Data Import**: Seamlessly import your data from LinkedIn dumps, raw text, or existing PDF resumes.
+- **Secure Storage**: Your resume data is safely stored in Firebase, allowing you to edit and update your resume across devices.
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: React, Vite
+- **Styling**: Vanilla CSS with custom Nothing UI monochromatic design system
+- **Backend/Database**: Firebase (Auth, Firestore, Cloud Functions)
+- **AI Integration**: Gemini API (via Firebase Cloud Functions)
+- **PDF Processing**: pdfjs-dist for client-side PDF parsing and extraction
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Setup Firebase configuration in a `.env` file (if applicable)
+4. Start the development server: `npm run dev`
+
+## Design Philosophy
+
+The UI is built with a focus on structure, minimalism, and clarity. It uses a monochromatic palette (black backgrounds, white text) with stark red accents and dot-matrix typography, drawing heavy inspiration from modern digital aesthetic trends.

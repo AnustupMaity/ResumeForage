@@ -55,7 +55,7 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <Link to="/" className="navbar-brand">
-        <i className="fas fa-file-alt"></i>
+        <img src="/logo.png" alt="ResumeForge Logo" style={{ width: '32px', height: '32px', borderRadius: '4px' }} />
         ResumeForge
       </Link>
 

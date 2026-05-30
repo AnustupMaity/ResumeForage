@@ -9,17 +9,12 @@ export default function LandingPage() {
     <div className="landing">
       {/* Hero */}
       <section className="hero">
-        <div className="hero-bg-orbs">
-          <div className="orb orb-1"></div>
-          <div className="orb orb-2"></div>
-          <div className="orb orb-3"></div>
-        </div>
         <div className="hero-content animate-fade-in-up">
           <div className="hero-badge">
-            <i className="fas fa-bolt"></i> Professional Resume Builder
+            <span className="dot-indicator"></span> Professional Resume Builder
           </div>
-          <h1>
-            Craft Your Perfect Resume in <span className="gradient-text">Minutes</span>
+          <h1 className="dot-font">
+            CRAFT YOUR PERFECT RESUME IN <span className="accent-text">MINUTES</span>
           </h1>
           <p className="hero-subtitle">
             Build stunning, professionally formatted resumes that stand out.
@@ -28,33 +23,33 @@ export default function LandingPage() {
           <div className="hero-actions">
             {currentUser ? (
               <Link to="/dashboard" className="btn btn-primary btn-lg">
-                <i className="fas fa-th-large"></i> Go to Dashboard
+                [ GO TO DASHBOARD ]
               </Link>
             ) : (
               <>
                 <Link to="/register" className="btn btn-primary btn-lg">
-                  <i className="fas fa-rocket"></i> Get Started Free
+                  [ GET STARTED FREE ]
                 </Link>
                 <Link to="/login" className="btn btn-secondary btn-lg">
-                  <i className="fas fa-sign-in-alt"></i> Log In
+                  [ LOG IN ]
                 </Link>
               </>
             )}
           </div>
           <div className="hero-stats">
             <div className="stat">
-              <span className="stat-number">10K+</span>
-              <span className="stat-label">Resumes Created</span>
+              <span className="stat-number dot-font">100%</span>
+              <span className="stat-label">ATS-Friendly</span>
             </div>
             <div className="stat-divider"></div>
             <div className="stat">
-              <span className="stat-number">1 Year</span>
-              <span className="stat-label">Unlimited Access</span>
+              <span className="stat-number dot-font">AI</span>
+              <span className="stat-label">Powered Extraction</span>
             </div>
             <div className="stat-divider"></div>
             <div className="stat">
-              <span className="stat-number">₹5</span>
-              <span className="stat-label">One-time Payment</span>
+              <span className="stat-number dot-font">ZERO</span>
+              <span className="stat-label">Hidden Fees</span>
             </div>
           </div>
         </div>
@@ -103,34 +98,34 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* Open Source */}
       <section className="pricing-section" id="pricing">
         <div className="page-container">
           <div className="section-header">
-            <p className="overline">Simple Pricing</p>
-            <h2>One Plan. No Hidden Fees.</h2>
-            <p>Get full access for an entire year at one low price</p>
+            <p className="overline">100% Free</p>
+            <h2 className="dot-font">OPEN ACCESS. NO HIDDEN FEES.</h2>
+            <p>Get full access to all features completely free.</p>
           </div>
           <div className="pricing-card glass-card">
-            <div className="pricing-popular">Most Popular</div>
-            <h3>Annual Access</h3>
+            <div className="pricing-popular">Free Forever</div>
+            <h3 className="dot-font">All Features Included</h3>
             <div className="pricing-amount">
               <span className="currency">₹</span>
-              <span className="price">5</span>
-              <span className="period">/ year</span>
+              <span className="price dot-font">0</span>
+              <span className="period">/ always</span>
             </div>
             <ul className="pricing-features">
-              <li><i className="fas fa-check"></i> Professional LaTeX-style template</li>
-              <li><i className="fas fa-check"></i> Live preview editor</li>
-              <li><i className="fas fa-check"></i> Unlimited edits for 1 year</li>
-              <li><i className="fas fa-check"></i> PDF download</li>
-              <li><i className="fas fa-check"></i> All sections included</li>
-              <li><i className="fas fa-check"></i> Custom sections support</li>
-              <li><i className="fas fa-check"></i> Secure cloud storage</li>
-              <li><i className="fas fa-check"></i> UPI payment — instant & easy</li>
+              <li><span className="dot-indicator-small"></span> Professional LaTeX-style template</li>
+              <li><span className="dot-indicator-small"></span> Live preview editor</li>
+              <li><span className="dot-indicator-small"></span> Unlimited resume edits</li>
+              <li><span className="dot-indicator-small"></span> High-quality PDF export</li>
+              <li><span className="dot-indicator-small"></span> AI-powered content generation</li>
+              <li><span className="dot-indicator-small"></span> Smart text/PDF import</li>
+              <li><span className="dot-indicator-small"></span> Secure cloud storage</li>
+              <li><span className="dot-indicator-small"></span> No credit card required</li>
             </ul>
             <Link to="/register" className="btn btn-primary btn-lg" style={{ width: '100%' }}>
-              <i className="fas fa-rocket"></i> Get Started Now
+              [ START BUILDING ]
             </Link>
           </div>
         </div>
@@ -145,21 +140,21 @@ export default function LandingPage() {
           </div>
           <div className="steps-grid">
             <div className="step-card">
-              <div className="step-number">01</div>
+              <div className="step-number dot-font">01</div>
               <h4>Sign Up & Fill In</h4>
               <p>Create your free account and fill in your details using our intuitive form editor.</p>
             </div>
             <div className="step-connector"><i className="fas fa-arrow-right"></i></div>
             <div className="step-card">
-              <div className="step-number">02</div>
-              <h4>Preview & Pay</h4>
-              <p>Preview your professionally formatted resume. Pay ₹5 via UPI to unlock downloads.</p>
+              <div className="step-number dot-font">02</div>
+              <h4>Live Preview</h4>
+              <p>Watch your resume format perfectly in real-time as you enter your details.</p>
             </div>
             <div className="step-connector"><i className="fas fa-arrow-right"></i></div>
             <div className="step-card">
-              <div className="step-number">03</div>
-              <h4>Download & Apply</h4>
-              <p>Download your resume as a PDF and start applying. Edit anytime for a full year!</p>
+              <div className="step-number dot-font">03</div>
+              <h4>Export & Apply</h4>
+              <p>Download your ATS-friendly PDF instantly and land your dream job!</p>
             </div>
           </div>
         </div>
@@ -170,7 +165,10 @@ export default function LandingPage() {
         <div className="page-container">
           <div className="footer-content">
             <div className="footer-brand">
-              <span className="navbar-brand"><i className="fas fa-file-alt"></i> ResumeForge</span>
+              <span className="navbar-brand">
+                <img src="/logo.png" alt="ResumeForge Logo" style={{ width: '32px', height: '32px', borderRadius: '4px' }} />
+                ResumeForge
+              </span>
               <p>Build professional resumes that get you hired.</p>
             </div>
             <div className="footer-links">

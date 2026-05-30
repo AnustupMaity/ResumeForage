@@ -2,7 +2,11 @@ import { useState, useRef } from 'react';
 import { parseLatex } from '../utils/latexParser';
 import { parseTextResume } from '../utils/textParser';
 import { parseResumeWithAI } from '../utils/geminiApi';
+import * as pdfjsLib from 'pdfjs-dist';
+import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.mjs?url';
 import './ResumeImport.css';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 export default function ResumeImport({ onImport, onClose }) {
   const [mode, setMode] = useState(null); // 'latex' | 'file' | 'text'
@@ -49,15 +53,8 @@ export default function ResumeImport({ onImport, onClose }) {
 
   async function parsePDF(file) {
     try {
-      // Dynamically load pdf.js from CDN
-      if (!window.pdfjsLib) {
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-        window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-          'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      }
-
       const arrayBuffer = await file.arrayBuffer();
-      const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       let fullText = '';
 
       for (let i = 1; i <= pdf.numPages; i++) {
@@ -75,15 +72,7 @@ export default function ResumeImport({ onImport, onClose }) {
     }
   }
 
-  function loadScript(src) {
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = src;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.appendChild(script);
-    });
-  }
+
 
   function handleLatexParse() {
     if (!latexCode.trim()) {
