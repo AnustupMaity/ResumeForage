@@ -1,0 +1,250 @@
+/* ===== Resume Import Modal Styles ===== */
+
+.import-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: var(--space-lg);
+}
+
+.import-modal {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.import-modal-lg {
+  max-width: 700px;
+}
+
+.import-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.import-header h3 {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.import-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-xl);
+}
+
+/* --- Import Options Cards --- */
+.import-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+.import-option {
+  text-align: center;
+  cursor: pointer;
+  border: 1px solid var(--border-subtle) !important;
+  transition: all var(--transition-base);
+  background: var(--bg-glass) !important;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+}
+
+.import-option:hover {
+  border-color: var(--accent-primary) !important;
+  background: rgba(108, 99, 255, 0.08) !important;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-glow);
+}
+
+.option-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-md);
+  border-radius: var(--radius-md);
+  background: var(--accent-gradient);
+  font-size: 1.3rem;
+  color: #fff;
+}
+
+.import-option h4 {
+  margin-bottom: var(--space-xs);
+  font-size: 1rem;
+}
+
+.import-option p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-sm);
+}
+
+.option-formats {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  padding: 3px 10px;
+  background: var(--bg-card);
+  border-radius: 50px;
+  border: 1px solid var(--border-subtle);
+}
+
+/* --- File Upload --- */
+.file-upload-area {
+  margin-top: var(--space-md);
+}
+
+.upload-dropzone {
+  border: 2px dashed var(--border-input);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3xl) var(--space-xl);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.upload-dropzone:hover {
+  border-color: var(--accent-primary);
+  background: rgba(108, 99, 255, 0.05);
+}
+
+.upload-dropzone i {
+  font-size: 2.5rem;
+  color: var(--accent-primary-light);
+  margin-bottom: var(--space-md);
+}
+
+.upload-dropzone p {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.upload-dropzone span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.file-name {
+  display: block;
+  margin-top: var(--space-md);
+  font-size: 0.85rem;
+  color: var(--accent-secondary);
+}
+
+/* --- LaTeX Input --- */
+.latex-input-area {
+  margin-top: var(--space-md);
+}
+
+.latex-textarea {
+  font-family: var(--font-mono) !important;
+  font-size: 0.82rem !important;
+  line-height: 1.5 !important;
+  min-height: 300px !important;
+  resize: vertical;
+}
+
+.latex-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-md);
+}
+
+/* --- Preview --- */
+.import-preview {
+  margin-top: var(--space-md);
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.preview-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.preview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
+}
+
+.preview-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.preview-section h5 {
+  font-size: 0.85rem;
+  color: var(--accent-primary-light);
+  margin-bottom: var(--space-sm);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.preview-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.preview-item {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-item span {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.preview-item:last-child {
+  border-bottom: none;
+}
+
+.import-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+}
+
+/* --- Responsive --- */
+@media (max-width: 640px) {
+  .import-options {
+    grid-template-columns: 1fr;
+  }
+  .preview-grid {
+    grid-template-columns: 1fr;
+  }
+  .import-modal {
+    max-width: 100%;
+  }
+}

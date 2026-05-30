@@ -1,0 +1,8 @@
+/* Navbar specific styles are mostly in index.css, 
+   but add any overrides here */
+.navbar-nav li {
+  list-style: none;
+}
+.navbar-nav button {
+  cursor: pointer;
+}

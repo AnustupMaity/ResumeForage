@@ -1,0 +1,251 @@
+/* ===== Resume Editor Page Styles ===== */
+
+.editor-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: calc(100vh - 65px);
+  overflow: hidden;
+}
+
+/* --- Left Panel (Form) --- */
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-right: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+}
+
+.editor-toolbar h3 {
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* Section tabs */
+.section-tabs {
+  display: flex;
+  gap: 2px;
+  padding: var(--space-sm) var(--space-md);
+  overflow-x: auto;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.section-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.section-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-glass);
+}
+
+.section-tab.active {
+  color: var(--accent-primary-light);
+  background: rgba(108, 99, 255, 0.1);
+  border-color: rgba(108, 99, 255, 0.3);
+}
+
+.section-tab i {
+  font-size: 0.75rem;
+}
+
+/* Form area */
+.editor-form {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-lg);
+}
+
+.form-section {
+  max-width: 600px;
+}
+
+.form-section-title {
+  font-size: 1.15rem;
+  margin-bottom: var(--space-xs);
+  color: var(--text-primary);
+}
+
+.form-section-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: var(--space-lg);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Entry cards (for repeatable sections) */
+.entry-card {
+  padding: var(--space-md) !important;
+  margin-bottom: var(--space-md);
+}
+
+.entry-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.entry-number {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-primary-light);
+}
+
+/* Bullet rows */
+.bullet-row {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.bullet-row .form-input {
+  flex: 1;
+}
+
+/* --- Right Panel (Preview) --- */
+.preview-panel {
+  overflow-y: auto;
+  background: #1a1a2e;
+}
+
+/* --- Mobile Preview Toggle --- */
+.preview-toggle {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 50;
+  box-shadow: var(--shadow-lg);
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .editor-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .preview-toggle {
+    display: flex;
+  }
+
+  .hide-mobile {
+    display: none !important;
+  }
+
+  .preview-panel {
+    height: calc(100vh - 65px);
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-tabs {
+    padding: var(--space-xs) var(--space-sm);
+  }
+  .section-tab span {
+    display: none;
+  }
+  .section-tab {
+    padding: 8px 12px;
+  }
+  .editor-form {
+    padding: var(--space-md);
+  }
+}
+
+/* --- Drag and Drop --- */
+.drag-item {
+  transition: opacity 0.2s, border-color 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+}
+
+.drag-item:hover {
+  border-color: rgba(108, 99, 255, 0.2);
+}
+
+.drag-item.dragging {
+  opacity: 0.4;
+  border-color: var(--accent-primary-light);
+}
+
+.drag-item.drag-over {
+  border-color: var(--accent-primary-light);
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.25);
+  background: rgba(108, 99, 255, 0.05) !important;
+}
+
+/* --- Quill Editor Overrides --- */
+.editor-form .ql-container {
+  min-height: 60px;
+  font-size: 0.9rem;
+}
+
+.editor-form .ql-toolbar {
+  border-color: var(--border-subtle) !important;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: var(--bg-secondary);
+}
+
+.editor-form .ql-container {
+  border-color: var(--border-subtle) !important;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  background: var(--bg-primary);
+}
+
+.editor-form .ql-editor {
+  min-height: 50px;
+  color: var(--text-primary);
+}
+
+.editor-form .ql-editor.ql-blank::before {
+  color: var(--text-muted);
+  font-style: italic;
+}

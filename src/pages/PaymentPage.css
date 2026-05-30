@@ -1,0 +1,78 @@
+/* ===== Payment Page Styles ===== */
+
+.payment-card {
+  width: 100%;
+  max-width: 500px;
+}
+
+.payment-card h2 {
+  text-align: center;
+}
+
+.payment-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  margin-top: var(--space-lg);
+}
+
+.payment-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.step-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 12px;
+  background: rgba(108, 99, 255, 0.12);
+  border: 1px solid rgba(108, 99, 255, 0.25);
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-primary-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.payment-step h4 {
+  margin: 0;
+}
+
+.qr-container {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-md);
+  background: #fff;
+  border-radius: var(--radius-md);
+}
+
+.upi-details {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md);
+  font-size: 0.85rem;
+}
+
+.upi-details p {
+  margin-bottom: 4px;
+  color: var(--text-secondary);
+}
+
+.upi-details p:last-child {
+  margin-bottom: 0;
+}
+
+.success-icon {
+  font-size: 3rem;
+  color: var(--accent-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.pending-icon {
+  font-size: 3rem;
+  color: var(--accent-gold);
+  margin-bottom: var(--space-md);
+}
