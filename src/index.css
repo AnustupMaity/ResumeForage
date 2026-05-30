@@ -384,17 +384,25 @@ p {
   list-style: none;
 }
 
+.navbar-nav a,
+.navbar-nav .btn {
+  font-family: var(--font-dot);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .navbar-nav a {
   color: var(--text-secondary);
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-sm);
+  border-radius: 0;
   transition: all var(--transition-fast);
 }
 .navbar-nav a:hover {
   color: var(--text-primary);
-  background: var(--bg-glass);
+  background: transparent;
+  box-shadow: 0 2px 0 0 var(--accent-primary);
 }
 
 /* --- Auth Pages Layout --- */
