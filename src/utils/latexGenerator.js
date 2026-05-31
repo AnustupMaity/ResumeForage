@@ -35,11 +35,16 @@ export function generateLatex(resume) {
       return `__LATEX_CMD_${commands.length - 1}__`;
     });
 
+    // Strip stray LaTeX commands that Gemini might have hallucinated into the raw text
+    tex = tex.replace(/\\(begin|end)\{[^}]*\}/g, '');
+    
     // Now safely escape special characters
     tex = tex.replace(/%/g, '\\%');
     tex = tex.replace(/\$/g, '\\$');
     tex = tex.replace(/#/g, '\\#');
     tex = tex.replace(/_/g, '\\_');
+    tex = tex.replace(/\{/g, '\\{');
+    tex = tex.replace(/\}/g, '\\}');
 
     // Restore LaTeX commands
     commands.forEach((cmd, i) => {
@@ -120,8 +125,8 @@ export function generateLatex(resume) {
       latex += `\\section*{Projects}\n\\hrule\n\\vspace{0.2cm}\n\\begin{itemize}[leftmargin=*]\n`;
       resume.projects.forEach(proj => {
         latex += `  \\item \\textbf{${proj.name || ''}}`;
-        if (proj.link) latex += ` | \\href{${proj.link}}{LINK}`;
-        if (proj.description) latex += `: ${htmlToLatex(proj.description)}`;
+        if (proj.link) latex += ` $|$ \\href{${proj.link}}{LINK}`;
+        if (proj.description) latex += ` - ${htmlToLatex(proj.description)}`;
         latex += `\n`;
       });
       latex += `\\end{itemize}\n\n`;
@@ -150,7 +155,7 @@ export function generateLatex(resume) {
         let line = '';
         if (ach.bold) line += `\\textbf{${ach.bold}} `;
         line += htmlToLatex(ach.text);
-        if (ach.link) line += ` | \\href{${ach.link}}{LINK}`;
+        if (ach.link) line += ` $|$ \\href{${ach.link}}{LINK}`;
         latex += `  \\item ${line.trim()}\n`;
       });
       latex += `\\end{itemize}\n\n`;
@@ -159,9 +164,9 @@ export function generateLatex(resume) {
     if (section === 'certifications' && resume.certifications?.length) {
       latex += `\\section*{Certifications}\n\\hrule\n\\vspace{0.2cm}\n\\begin{itemize}[leftmargin=*]\n`;
       resume.certifications.forEach(cert => {
-        let line = `\\textbf{${cert.name || ''}}`;
-        if (cert.provider) line += ` (${cert.provider})`;
-        if (cert.link) line += `: \\href{${cert.link}}{CERTIFICATE LINK}`;
+        let line = `\\textbf{${(cert.name || '').replace(/:$/, '')}}`;
+        if (cert.provider) line += ` (${cert.provider.replace(/:$/, '')})`;
+        if (cert.link) line += ` $|$ \\href{${cert.link}}{CERTIFICATE LINK}`;
         latex += `  \\item ${line}\n`;
       });
       latex += `\\end{itemize}\n\n`;

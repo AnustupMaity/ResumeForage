@@ -1,7 +1,14 @@
 export default async function handler(req, res) {
-  // Only allow POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  // Basic Origin validation to prevent simple bot abuse
+  const origin = req.headers.origin || req.headers.referer || '';
+  const isVercel = origin.includes('resume-forage-app.vercel.app');
+  const isLocalhost = origin.includes('localhost');
+  if (origin && !isVercel && !isLocalhost) {
+    return res.status(403).json({ error: 'Forbidden' });
   }
 
   const { prompt, temperature = 0.7 } = req.body;
