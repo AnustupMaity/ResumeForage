@@ -54,14 +54,12 @@ export default function AdminPayments() {
 
       // Send email notification to User
       try {
-        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        await fetch('/api/sendEmail', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            service_id: 'service_920gocp',
-            template_id: 'template_jxhw6fl',
-            user_id: 'tLkq2m6tl1Lqs7Psv',
-            template_params: {
+            template: 'user',
+            templateParams: {
               to_email: payment.email,
               subject: 'Your Payment is Approved!',
               message: `Hello ${payment.name || 'User'},\n\nYour payment for ResumeForge (Transaction ID: ${payment.transactionId}) has been successfully verified!\n\nYou now have full access to download your PDFs. Happy building!`

@@ -1,15 +1,22 @@
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import app from '../firebase';
-
-const functions = getFunctions(app);
-
 async function callGemini(prompt, temperature = 0.7) {
   try {
-    const generateWithGemini = httpsCallable(functions, 'generateWithGemini');
-    const result = await generateWithGemini({ prompt, temperature });
-    return result.data.text;
+    const response = await fetch('/api/generateWithGemini', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ prompt, temperature })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error || `HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.text;
   } catch (err) {
-    console.error('Gemini Cloud Function Error:', err);
+    console.error('Gemini Backend Error:', err);
     throw new Error('AI request failed. Please try again.');
   }
 }

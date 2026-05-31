@@ -58,14 +58,12 @@ export default function AdminSupportPage() {
 
       // Send email notification to User
       try {
-        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        await fetch('/api/sendEmail', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            service_id: 'service_920gocp',
-            template_id: 'template_jxhw6fl',
-            user_id: 'tLkq2m6tl1Lqs7Psv',
-            template_params: {
+            template: 'user',
+            templateParams: {
               to_email: activeTicket.email,
               subject: `Admin Reply: ${activeTicket.type}`,
               message: `An admin has replied to your support ticket regarding ${activeTicket.type}:\n\n"${newMsg.text}"\n\nPlease log in to ResumeForge to reply or view the full thread.`

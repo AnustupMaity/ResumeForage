@@ -101,14 +101,12 @@ export default function SupportPage() {
 
       // Send email notification to Admin
       try {
-        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        await fetch('/api/sendEmail', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            service_id: 'service_920gocp',
-            template_id: 'template_z8wvm0a', // Admin template
-            user_id: 'tLkq2m6tl1Lqs7Psv',
-            template_params: {
+            template: 'admin',
+            templateParams: {
               subject: `New Support Ticket: ${issueType}`,
               message: `User: ${currentUser.email}\nIssue: ${issueType}\n\nDescription:\n${description.trim()}`
             }

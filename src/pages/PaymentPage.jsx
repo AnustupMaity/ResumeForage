@@ -81,16 +81,14 @@ export default function PaymentPage() {
 
       // Send email notification to Admin using EmailJS
       try {
-        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        await fetch('/api/sendEmail', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            service_id: 'service_920gocp',
-            template_id: 'template_z8wvm0a',
-            user_id: 'tLkq2m6tl1Lqs7Psv', // Public Key
-            template_params: {
+            template: 'admin',
+            templateParams: {
               subject: 'New Payment Received',
               message: `User: ${name.trim()} (${currentUser.email})\nPhone: ${phone.trim()}\nTransaction ID: ${transactionId.trim()}\nAmount: ₹5`
             }
