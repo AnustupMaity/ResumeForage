@@ -11,6 +11,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminPayments from './pages/AdminPayments';
 import SupportPage from './pages/SupportPage';
 import AdminSupportPage from './pages/AdminSupportPage';
+import AdminUsersPage from './pages/AdminUsersPage';
 import MyResumesPage from './pages/MyResumesPage';
 
 function ProtectedRoute({ children }) {
@@ -85,6 +86,9 @@ function AppContent() {
         } />
         <Route path="/admin/support" element={
           <ProtectedRoute><AdminSupportPage /></ProtectedRoute>
+        } />
+        <Route path="/admin/users" element={
+          <ProtectedRoute><AdminUsersPage /></ProtectedRoute>
         } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -73,6 +73,7 @@ export default function Navbar() {
             {isAdmin() && (
               <>
                 <li><Link to="/admin"><i className="fas fa-chart-pie"></i> <span className="nav-text">Dashboard</span></Link></li>
+                <li><Link to="/admin/users"><i className="fas fa-users"></i> <span className="nav-text">Users</span></Link></li>
                 <li><Link to="/admin/payments"><i className="fas fa-rupee-sign"></i> <span className="nav-text">Payments</span></Link></li>
                 <li>
                   <Link to="/admin/support" style={{ position: 'relative' }}>

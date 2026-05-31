@@ -6,8 +6,9 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [resetMessage, setResetMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, loginWithGoogle } = useAuth();
+  const { login, loginWithGoogle, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -30,6 +31,7 @@ export default function LoginPage() {
 
   async function handleGoogleLogin() {
     setError('');
+    setResetMessage('');
     setLoading(true);
     try {
       const result = await loginWithGoogle();
@@ -45,6 +47,23 @@ export default function LoginPage() {
     setLoading(false);
   }
 
+  async function handleResetPassword() {
+    if (!email) {
+      setError('Please enter your email address in the field below first.');
+      return;
+    }
+    setError('');
+    setResetMessage('');
+    setLoading(true);
+    try {
+      await resetPassword(email);
+      setResetMessage('Password reset email sent! Check your inbox.');
+    } catch (err) {
+      setError(getErrorMessage(err.code));
+    }
+    setLoading(false);
+  }
+
   function getErrorMessage(code) {
     switch (code) {
       case 'auth/user-not-found': return 'No account found with this email.';
@@ -52,7 +71,8 @@ export default function LoginPage() {
       case 'auth/invalid-email': return 'Please enter a valid email address.';
       case 'auth/too-many-requests': return 'Too many attempts. Please try again later.';
       case 'auth/popup-closed-by-user': return 'Google sign-in was cancelled.';
-      default: return 'Login failed. Please try again.';
+      case 'auth/missing-email': return 'Please enter an email address.';
+      default: return 'An error occurred. Please try again.';
     }
   }
 
@@ -68,6 +88,15 @@ export default function LoginPage() {
             marginBottom: '16px', fontSize: '0.85rem', animation: 'none'
           }}>
             <i className="fas fa-exclamation-circle"></i> {error}
+          </div>
+        )}
+
+        {resetMessage && (
+          <div className="toast-success" style={{ 
+            position: 'static', padding: '10px 14px', borderRadius: '8px',
+            marginBottom: '16px', fontSize: '0.85rem', animation: 'none'
+          }}>
+            <i className="fas fa-check-circle"></i> {resetMessage}
           </div>
         )}
 
@@ -102,7 +131,16 @@ export default function LoginPage() {
             />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="login-password">Password</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label className="form-label" htmlFor="login-password">Password</label>
+              <button 
+                type="button" 
+                onClick={handleResetPassword} 
+                style={{ background: 'none', border: 'none', color: 'var(--accent-primary-light)', fontSize: '0.8rem', cursor: 'pointer', padding: 0 }}
+              >
+                Forgot Password?
+              </button>
+            </div>
             <input
               id="login-password"
               className="form-input"

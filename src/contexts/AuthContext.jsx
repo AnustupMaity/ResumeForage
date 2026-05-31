@@ -5,7 +5,8 @@ import {
   signInWithPopup,
   signOut,
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, googleProvider, db } from '../firebase';
@@ -97,6 +98,10 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
+  function resetPassword(email) {
+    return sendPasswordResetEmail(auth, email);
+  }
+
   function isAdmin() {
     return currentUser && ADMIN_EMAILS.includes(currentUser.email);
   }
@@ -127,7 +132,15 @@ export function AuthProvider({ children }) {
       if (user) {
         try {
           const userDoc = await createUserDoc(user);
-          setUserData(userDoc.data());
+          const data = userDoc.data();
+          if (data?.isBlocked) {
+            alert('Your account has been suspended by the administrator. Please contact support.');
+            await signOut(auth);
+            setCurrentUser(null);
+            setUserData(null);
+          } else {
+            setUserData(data);
+          }
         } catch (err) {
           console.error('Error loading user data:', err);
         }
@@ -148,6 +161,7 @@ export function AuthProvider({ children }) {
     login,
     loginWithGoogle,
     logout,
+    resetPassword,
     isAdmin,
     isSubscriptionActive,
     refreshUserData

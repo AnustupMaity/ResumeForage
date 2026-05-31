@@ -150,6 +150,7 @@ export default function AdminDashboard() {
             <p>High-level statistics of ResumeForge platform.</p>
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
+            <Link to="/admin/users" className="btn btn-secondary"><i className="fas fa-users"></i> Manage Users</Link>
             <Link to="/admin/payments" className="btn btn-secondary"><i className="fas fa-rupee-sign"></i> Manage Payments</Link>
             <Link to="/admin/support" className="btn btn-secondary"><i className="fas fa-headset"></i> Support Tickets</Link>
           </div>
