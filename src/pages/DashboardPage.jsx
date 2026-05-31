@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 import './DashboardPage.css';
+import './AdminPage.css'; // For payment-list styles
 
 export default function DashboardPage() {
   const { currentUser, userData, isSubscriptionActive } = useAuth();
@@ -15,18 +16,27 @@ export default function DashboardPage() {
     : null;
 
   const [resumeCount, setResumeCount] = useState(0);
+  const [payments, setPayments] = useState([]);
 
   useEffect(() => {
-    async function fetchCount() {
+    async function fetchData() {
       if (!currentUser) return;
       try {
+        // Fetch Resume Count
         const snap = await getDocs(collection(db, 'users', currentUser.uid, 'resumes'));
         setResumeCount(snap.size);
+
+        // Fetch Payment History (sort locally to avoid requiring a composite index)
+        const payQ = query(collection(db, 'payments'), where('uid', '==', currentUser.uid));
+        const paySnap = await getDocs(payQ);
+        const fetchedPayments = paySnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        fetchedPayments.sort((a, b) => b.submittedAt?.toMillis() - a.submittedAt?.toMillis());
+        setPayments(fetchedPayments);
       } catch (e) {
-        console.error('Failed to fetch resume count:', e);
+        console.error('Failed to fetch dashboard data:', e);
       }
     }
-    fetchCount();
+    fetchData();
   }, [currentUser]);
 
   return (
@@ -127,12 +137,52 @@ export default function DashboardPage() {
             </div>
             {userData?.subscription?.transactionId && (
               <div className="account-row">
-                <span className="account-label">Transaction ID</span>
+                <span className="account-label">Current Transaction ID</span>
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}>{userData.subscription.transactionId}</span>
               </div>
             )}
           </div>
         </div>
+
+        {/* Payment History */}
+        <div className="glass-card account-info" style={{ marginTop: 'var(--space-xl)' }}>
+          <h4 className="dot-font"><i className="fas fa-history"></i> Payment History</h4>
+          {payments.length === 0 ? (
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No payment history found.</p>
+          ) : (
+            <div className="payments-list" style={{ marginTop: '16px' }}>
+              {payments.map(payment => (
+                <div key={payment.id} className="payment-item glass-card" style={{ padding: '16px', background: 'var(--bg-primary)' }}>
+                  <div className="payment-info">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                      <strong style={{ fontSize: '1.05rem' }}>₹{payment.amount} - Subscription</strong>
+                      <span className={`badge badge-${payment.status === 'approved' ? 'success' : payment.status === 'rejected' ? 'danger' : 'warning'}`}>
+                        {payment.status.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="payment-details-row" style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+                      <div className="payment-detail">
+                        <span className="detail-label">Transaction ID</span>
+                        <span className="detail-value mono">{payment.transactionId}</span>
+                      </div>
+                      <div className="payment-detail">
+                        <span className="detail-label">Date Submitted</span>
+                        <span className="detail-value">{payment.submittedAt?.toDate ? payment.submittedAt.toDate().toLocaleDateString() : 'N/A'}</span>
+                      </div>
+                      {payment.status === 'rejected' && payment.reason && (
+                        <div className="payment-detail">
+                          <span className="detail-label" style={{ color: 'var(--accent-warm)' }}>Rejection Reason</span>
+                          <span className="detail-value">{payment.reason}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );
