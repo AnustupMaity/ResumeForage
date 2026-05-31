@@ -236,10 +236,16 @@ export default function ResumeEditor() {
 
   async function handleSave() {
     if (!currentUser || !resume) return;
+
+    const nameStr = resume.personalInfo?.name || 'Untitled';
+    const defaultName = `${nameStr.replace(/\s+/g, '_')}_Resume_${new Date().toISOString().split('T')[0]}`;
+    const userInput = window.prompt("Enter a name to save this resume as:", defaultName);
+    if (userInput === null) return; // User clicked Cancel
+    const resumeName = userInput.trim() || defaultName;
+
     setSaving(true);
     try {
       let currentRef = resumeRef;
-      const resumeName = resume.personalInfo?.name || 'Untitled Resume';
       
       const payload = {
         name: resumeName,
@@ -278,10 +284,17 @@ export default function ResumeEditor() {
     const element = document.getElementById('resume-content');
     if (!element) return;
 
+    const nameStr = resume.personalInfo?.name || 'Untitled';
+    const defaultName = `${nameStr.replace(/\s+/g, '_')}_Resume.pdf`;
+    const userInput = window.prompt("Enter a filename for the PDF:", defaultName);
+    if (userInput === null) return;
+    let finalName = userInput.trim() || defaultName;
+    if (!finalName.toLowerCase().endsWith('.pdf')) finalName += '.pdf';
+
     const html2pdf = (await import('html2pdf.js')).default;
     const opt = {
       margin: 0,
-      filename: `${resume.personalInfo?.name || 'resume'}_resume.pdf`,
+      filename: finalName,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2, useCORS: true, letterRendering: true },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
@@ -294,12 +307,20 @@ export default function ResumeEditor() {
       navigate('/payment');
       return;
     }
+
+    const nameStr = resume.personalInfo?.name || 'Untitled';
+    const defaultName = `${nameStr.replace(/\s+/g, '_')}_Resume.tex`;
+    const userInput = window.prompt("Enter a filename for the LaTeX file:", defaultName);
+    if (userInput === null) return;
+    let finalName = userInput.trim() || defaultName;
+    if (!finalName.toLowerCase().endsWith('.tex')) finalName += '.tex';
+
     const latexString = generateLatex(resume);
     const blob = new Blob([latexString], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${resume.personalInfo?.name || 'resume'}_resume.tex`;
+    a.download = finalName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
