@@ -1,7 +1,9 @@
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 
-exports.generateWithGemini = onCall(async (request) => {
+exports.generateWithGemini = onCall({
+  cors: ["https://resume-forage-app.vercel.app", "http://localhost:5173", "http://localhost:3000"]
+}, async (request) => {
   // Ensure the user is authenticated
   if (!request.auth) {
     throw new HttpsError("unauthenticated", "You must be logged in to use AI features.");
