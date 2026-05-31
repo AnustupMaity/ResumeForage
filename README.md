@@ -1,65 +1,69 @@
 <div align="center">
-  <img src="https://img.icons8.com/color/96/000000/resume.png" alt="ResumeForge Logo" width="80" />
+  <img src="https://img.icons8.com/color/96/000000/resume.png" alt="ResumeForge Logo" width="64" />
   
   # ResumeForge
   
-  **An Open-Source, AI-Powered, LaTeX Resume Builder.** <br/>
-  Featuring a stunning, minimalist "Nothing UI" aesthetic.
+  **An Open-Source, AI-Powered LaTeX Resume Builder.** <br/>
   
-  [**🚀 View Live Deployment**](https://resume-forage-app.vercel.app)
+  [**View Live Deployment**](https://resume-forage-app.vercel.app)
 </div>
 
 <br/>
 
-## 🌟 About The Project
+## Overview
 
-ResumeForge is a next-generation resume builder designed to help students, developers, and professionals create ATS-friendly, industry-standard LaTeX resumes in minutes. 
+ResumeForge is a next-generation resume builder engineered for students and professionals to generate ATS-optimized, industry-standard LaTeX resumes. By abstracting the complexity of LaTeX syntax, it offers a real-time editing experience coupled with cloud synchronization and AI-driven content generation.
 
-Instead of struggling with complex LaTeX syntax or fighting with MS Word margins, ResumeForge provides a gorgeous, real-time live preview editor that does the heavy lifting for you. 
-
-### Core Features
-- 🤖 **AI-Powered Extraction**: Automatically extracts your skills, experience, and education from raw text, LinkedIn dumps, or old PDFs using Google's Gemini AI.
-- 🎨 **Real-Time Live Preview**: Watch your resume compile and format perfectly in real-time as you type.
-- 📄 **ATS-Friendly LaTeX Export**: Generate clean, professional PDFs that pass Applicant Tracking Systems (ATS) with flying colors.
-- 💾 **Cloud Sync & History**: Securely save multiple resume versions to the cloud and access them from any device.
-- 💳 **Annual Subscription**: Just ₹5 for an entire year of unlimited AI edits and PDF downloads.
+### Key Capabilities
+- **AI Integration**: Extracts and structures data from unstructured text, LinkedIn exports, or legacy PDFs using Google's Gemini AI.
+- **Real-Time Compilation**: Live preview environment that instantly compiles input data into a structured visual output.
+- **ATS Compliance**: Generates strictly formatted, parser-friendly PDFs optimized for modern Applicant Tracking Systems.
+- **Cloud Infrastructure**: Secure, multi-device synchronization with version history via Firebase.
 
 ---
 
-## 🏗️ Architecture
+## Architecture Overview
 
-ResumeForge is built using a modern, scalable, and highly secure serverless architecture:
+ResumeForge leverages a modern serverless infrastructure to ensure scalability, security, and high availability.
 
-- **Frontend**: Built with **React** and **Vite**, featuring a completely custom vanilla CSS design system inspired by the monochromatic "Nothing OS" aesthetic (dark themes, matrix fonts, stark red accents).
-- **Authentication & Database**: **Firebase Auth** and **Firestore** provide secure, real-time data synchronization across all user devices. Strict Security Rules ensure user data is completely private.
-- **Backend APIs**: Built on **Vercel Serverless Functions** (`/api`). The backend acts as a secure proxy to communicate with third-party services, ensuring API keys are never exposed to the client.
-- **AI Engine**: Integrated with **Google Gemini AI** via the secure Vercel backend to parse complex unstructured resume data into structured JSON.
-- **Notification System**: Uses **EmailJS** (securely integrated via the Vercel backend) to dispatch automated payment receipts and support ticket updates.
-- **PDF Processing**: Leverages `pdfjs-dist` for client-side PDF parsing.
+```mermaid
+graph TD
+    Client[Client (React/Vite)] -->|HTTP POST| Vercel[Vercel Serverless API]
+    Client -->|Auth & Sync| Firebase[(Firebase Auth & Firestore)]
+    
+    Vercel -->|Prompt/Data| Gemini[Google Gemini AI]
+    Vercel -->|Templates| EmailJS[EmailJS Notifications]
+    
+    subgraph Frontend
+        Client
+        PDFJS[pdf.js Parser]
+        Compiler[html2pdf]
+    end
+    
+    Client --- PDFJS
+    Client --- Compiler
+```
+
+### Stack Breakdown
+- **Frontend Layer**: React.js bundled via Vite. Implements a custom monochromatic design system.
+- **Data & Auth Layer**: Firebase Firestore for real-time document synchronization. Firebase Auth for robust session management. Strict Firestore Security Rules govern data access.
+- **Compute Layer**: Vercel Serverless Functions (`/api`). Acts as a secure proxy for third-party integrations, ensuring sensitive API keys remain isolated from the client runtime.
+- **AI & Integrations**: 
+  - Google Gemini AI for advanced NLP parsing and content rewriting.
+  - EmailJS for automated transactional system notifications.
 
 ---
 
-## 👨‍💻 Developed & Maintained By
+## Contact & Maintainer
 
-**Anustup Maity**  
-*National Institute of Technology, Durgapur*  
-*Indian Institute of Technology, Madras (BS Data Science)*
+**Anustup Maity**
 
 - **GitHub**: [@AnustupMaity](https://github.com/AnustupMaity)
 - **LinkedIn**: [Anustup Maity](https://linkedin.com/in/AnustupMaity)
+- **Email**: [anustupmaity2004@gmail.com](mailto:anustupmaity2004@gmail.com)
 
 ---
 
-## 📬 Contact
-
-Have a question, found a bug, or want to collaborate? I'd love to hear from you!
-
-**Email**: [anustupmaity2004@gmail.com](mailto:anustupmaity2004@gmail.com)
-
----
-
-## 📜 License
+## License
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
-
-*(Note: For instructions on how to run this project locally, please refer to the `LOCAL.md` file located in the source code.)*
