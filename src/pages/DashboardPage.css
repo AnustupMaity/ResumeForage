@@ -108,4 +108,9 @@
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
+  .account-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
 }

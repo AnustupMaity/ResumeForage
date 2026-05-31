@@ -139,6 +139,11 @@
   }
   .payment-item {
     flex-direction: column;
+    align-items: stretch;
+  }
+  .payment-actions {
+    align-self: flex-start;
+    margin-top: var(--space-sm);
   }
   .payment-details-row {
     grid-template-columns: 1fr 1fr;
@@ -147,7 +152,7 @@
 
 @media (max-width: 640px) {
   .admin-stats {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
   .payment-details-row {
     grid-template-columns: 1fr;
