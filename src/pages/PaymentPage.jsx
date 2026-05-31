@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
 import { QRCodeSVG } from 'qrcode.react';
 import { db } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
@@ -19,6 +19,32 @@ export default function PaymentPage() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [checkingPending, setCheckingPending] = useState(true);
+  const [hasPending, setHasPending] = useState(false);
+
+  useEffect(() => {
+    async function checkPendingPayment() {
+      if (!currentUser || isSubscriptionActive()) {
+        setCheckingPending(false);
+        return;
+      }
+      try {
+        const payQ = query(
+          collection(db, 'payments'),
+          where('uid', '==', currentUser.uid)
+        );
+        const snap = await getDocs(payQ);
+        const hasPendingPayment = snap.docs.some(doc => doc.data().status === 'pending');
+        if (hasPendingPayment) {
+          setHasPending(true);
+        }
+      } catch (err) {
+        console.error('Failed to check pending payments:', err);
+      }
+      setCheckingPending(false);
+    }
+    checkPendingPayment();
+  }, [currentUser]);
 
   const upiLink = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${AMOUNT}&cu=INR&tn=${encodeURIComponent('ResumeForge Annual Subscription')}`;
 
@@ -37,7 +63,11 @@ export default function PaymentPage() {
     );
   }
 
-  if (submitted) {
+  if (checkingPending) {
+    return <div className="loading-screen"><div className="spinner"></div></div>;
+  }
+
+  if (submitted || hasPending) {
     return (
       <div className="auth-page">
         <div className="glass-card" style={{ maxWidth: 500, textAlign: 'center', padding: '48px 32px' }}>
