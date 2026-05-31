@@ -19,6 +19,7 @@ export default async function handler(req, res) {
 
   const serviceId = process.env.EMAILJS_SERVICE_ID;
   const publicKey = process.env.EMAILJS_PUBLIC_KEY;
+  const privateKey = process.env.EMAILJS_PRIVATE_KEY;
   
   let actualTemplateId;
   if (template === 'admin') {
@@ -33,6 +34,7 @@ export default async function handler(req, res) {
     const missing = [];
     if (!serviceId) missing.push('EMAILJS_SERVICE_ID');
     if (!publicKey) missing.push('EMAILJS_PUBLIC_KEY');
+    if (!privateKey) missing.push('EMAILJS_PRIVATE_KEY');
     if (!actualTemplateId) missing.push(template === 'admin' ? 'EMAILJS_ADMIN_TEMPLATE' : 'EMAILJS_USER_TEMPLATE');
     
     console.error('EmailJS environment variables are missing:', missing);
@@ -50,6 +52,7 @@ export default async function handler(req, res) {
         service_id: serviceId,
         template_id: actualTemplateId,
         user_id: publicKey,
+        accessToken: privateKey,
         template_params: templateParams
       })
     });
