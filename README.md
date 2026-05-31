@@ -1,14 +1,17 @@
 <div align="center">
   <img src="https://img.icons8.com/color/96/000000/resume.png" alt="ResumeForge Logo" width="64" />
+  <h1>ResumeForge</h1>
+  <p><b>An Open-Source, AI-Powered LaTeX Resume Builder.</b></p>
   
-  # ResumeForge
-  
-  **An Open-Source, AI-Powered LaTeX Resume Builder.** <br/>
-  
-  [**View Live Deployment**](https://resume-forage-app.vercel.app)
+  [![Vercel Deployment](https://img.shields.io/badge/Deployed_on_Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://resume-forage-app.vercel.app)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+  [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)]()
+  [![Firebase](https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black)]()
 </div>
 
 <br/>
+
+![ResumeForge Demo Screenshot](assets/demo.png)
 
 ## Overview
 
@@ -22,22 +25,31 @@ ResumeForge is a next-generation resume builder engineered for students and prof
 
 ---
 
+## Subscription & Pricing
+
+ResumeForge is completely free and open-source to host locally. However, the official live deployment offers a highly affordable subscription model to cover AI and server costs:
+
+- **Free Tier**: Build and preview your resume in real-time. Use AI Assistant to rewrite bullet points. Export to JSON.
+- **Pro Tier (₹5 / Year)**: Unlocks limitless PDF downloads, LaTeX source code exports, full Cover Letter generation, ATS Score Checkers, and prioritized email support.
+
+---
+
 ## Architecture Overview
 
 ResumeForge leverages a modern serverless infrastructure to ensure scalability, security, and high availability.
 
 ```mermaid
 graph TD
-    Client[Client (React/Vite)] -->|HTTP POST| Vercel[Vercel Serverless API]
-    Client -->|Auth & Sync| Firebase[(Firebase Auth & Firestore)]
+    Client["Client (React/Vite)"] -->|"HTTP POST"| Vercel["Vercel Serverless API"]
+    Client -->|"Auth & Sync"| Firebase[("Firebase Auth & Firestore")]
     
-    Vercel -->|Prompt/Data| Gemini[Google Gemini AI]
-    Vercel -->|Templates| EmailJS[EmailJS Notifications]
+    Vercel -->|"Prompt/Data"| Gemini["Google Gemini AI"]
+    Vercel -->|"Templates"| EmailJS["EmailJS Notifications"]
     
     subgraph Frontend
         Client
-        PDFJS[pdf.js Parser]
-        Compiler[html2pdf]
+        PDFJS["pdf.js Parser"]
+        Compiler["html2pdf"]
     end
     
     Client --- PDFJS
