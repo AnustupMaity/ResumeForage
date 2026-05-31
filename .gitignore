@@ -25,3 +25,4 @@ upload.env
 *.njsproj
 *.sln
 *.sw?
+LOCAL.md
