@@ -30,8 +30,16 @@ export default async function handler(req, res) {
   }
 
   if (!serviceId || !publicKey || !actualTemplateId) {
-    console.error('EmailJS environment variables are missing.');
-    return res.status(500).json({ error: 'Server configuration error.' });
+    const missing = [];
+    if (!serviceId) missing.push('EMAILJS_SERVICE_ID');
+    if (!publicKey) missing.push('EMAILJS_PUBLIC_KEY');
+    if (!actualTemplateId) missing.push(template === 'admin' ? 'EMAILJS_ADMIN_TEMPLATE' : 'EMAILJS_USER_TEMPLATE');
+    
+    console.error('EmailJS environment variables are missing:', missing);
+    return res.status(500).json({ 
+      error: 'Server configuration error. Missing Vercel Environment Variables.',
+      missingVariables: missing
+    });
   }
 
   try {
@@ -49,7 +57,10 @@ export default async function handler(req, res) {
     if (!response.ok) {
       const text = await response.text();
       console.error('EmailJS Error:', text);
-      return res.status(500).json({ error: 'Failed to send email.' });
+      return res.status(500).json({ 
+        error: 'EmailJS API rejected the request.', 
+        details: text 
+      });
     }
     
     return res.status(200).json({ success: true });
