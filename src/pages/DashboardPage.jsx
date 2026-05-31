@@ -1,4 +1,7 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 import './DashboardPage.css';
 
@@ -11,7 +14,20 @@ export default function DashboardPage() {
     ? (expiresAt.toDate ? expiresAt.toDate() : new Date(expiresAt)).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' })
     : null;
 
-  const resumeName = userData?.resume?.personalInfo?.name;
+  const [resumeCount, setResumeCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchCount() {
+      if (!currentUser) return;
+      try {
+        const snap = await getDocs(collection(db, 'users', currentUser.uid, 'resumes'));
+        setResumeCount(snap.size);
+      } catch (e) {
+        console.error('Failed to fetch resume count:', e);
+      }
+    }
+    fetchCount();
+  }, [currentUser]);
 
   return (
     <div className="dashboard-page">
@@ -54,18 +70,17 @@ export default function DashboardPage() {
             <div className="card-icon-wrap" style={{ background: 'rgba(108, 99, 255, 0.12)' }}>
               <i className="fas fa-file-alt" style={{ color: 'var(--accent-primary-light)' }}></i>
             </div>
-            <h4 className="dot-font">Your Resume</h4>
-            {resumeName ? (
-              <>
-                <p className="card-detail" style={{ fontSize: '1.1rem', fontWeight: 600 }}>{resumeName}</p>
-                <p className="card-detail-sub">{userData?.resume?.education?.length || 0} education • {userData?.resume?.projects?.length || 0} projects • {userData?.resume?.experience?.length || 0} experience</p>
-              </>
-            ) : (
-              <p className="card-detail">No resume data yet. Start building!</p>
-            )}
-            <Link to="/editor" className="btn btn-primary btn-sm" style={{ marginTop: '12px' }}>
-              <i className="fas fa-edit"></i> {resumeName ? 'Edit Resume' : 'Start Building'}
-            </Link>
+            <h4 className="dot-font">Your Resumes</h4>
+            <p className="card-detail" style={{ fontSize: '1.1rem', fontWeight: 600 }}>{resumeCount} saved</p>
+            <p className="card-detail-sub">Manage multiple versions and history</p>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+              <Link to="/resumes" className="btn btn-primary btn-sm" style={{ flex: 1, justifyContent: 'center' }}>
+                <i className="fas fa-history"></i> History
+              </Link>
+              <Link to="/editor" className="btn btn-secondary btn-sm" style={{ flex: 1, justifyContent: 'center' }}>
+                <i className="fas fa-plus"></i> New
+              </Link>
+            </div>
           </div>
 
           {/* Quick Actions */}
@@ -75,8 +90,8 @@ export default function DashboardPage() {
             </div>
             <h4 className="dot-font">Quick Actions</h4>
             <div className="quick-actions">
-              <Link to="/editor" className="btn btn-secondary btn-sm">
-                <i className="fas fa-edit"></i> Edit Resume
+              <Link to="/resumes" className="btn btn-secondary btn-sm">
+                <i className="fas fa-history"></i> My Resumes
               </Link>
               {subActive && (
                 <Link to="/editor" className="btn btn-secondary btn-sm">

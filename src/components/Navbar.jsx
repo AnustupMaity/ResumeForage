@@ -65,6 +65,7 @@ export default function Navbar() {
             {!isAdmin() && (
               <>
                 <li><Link to="/dashboard"><i className="fas fa-th-large"></i> <span className="nav-text">Dashboard</span></Link></li>
+                <li><Link to="/resumes"><i className="fas fa-history"></i> <span className="nav-text">My Resumes</span></Link></li>
                 <li><Link to="/support"><i className="fas fa-headset"></i> <span className="nav-text">Support</span></Link></li>
               </>
             )}

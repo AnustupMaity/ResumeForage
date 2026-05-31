@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { doc, updateDoc } from 'firebase/firestore';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { doc, updateDoc, collection, addDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
 import ResumePreview from '../components/ResumePreview';
@@ -81,6 +81,9 @@ function GlobalAIForm({ resume, setResume, pushToHistory }) {
 export default function ResumeEditor() {
   const { currentUser, userData, isSubscriptionActive, refreshUserData } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const resumeId = searchParams.get('id');
+  const [resumeRef, setResumeRef] = useState(null);
   const [resume, setResume] = useState(null);
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -135,13 +138,28 @@ export default function ResumeEditor() {
   }, [pushToHistory]);
 
   useEffect(() => {
-    if (userData?.resume && !resume && history.length === 0) {
+    if (!currentUser || !userData) return;
+
+    if (resumeId && !resume && history.length === 0) {
+      getDoc(doc(db, 'users', currentUser.uid, 'resumes', resumeId)).then(rDoc => {
+        if (rDoc.exists()) {
+          const dbResume = rDoc.data().data || rDoc.data();
+          setResume(dbResume);
+          setHistory([JSON.parse(JSON.stringify(dbResume))]);
+          setHistoryIndex(0);
+          setResumeRef(doc(db, 'users', currentUser.uid, 'resumes', resumeId));
+        } else {
+          alert('Resume not found!');
+          navigate('/resumes');
+        }
+      }).catch(console.error);
+    } else if (!resumeId && userData.resume && !resume && history.length === 0) {
       const initialResume = JSON.parse(JSON.stringify(userData.resume));
       setResume(initialResume);
       setHistory([initialResume]);
       setHistoryIndex(0);
     }
-  }, [userData]);
+  }, [currentUser, userData, resumeId, resume, history.length, navigate]);
 
   const updateField = useCallback((path, value) => {
     setResume(prev => {
@@ -220,8 +238,28 @@ export default function ResumeEditor() {
     if (!currentUser || !resume) return;
     setSaving(true);
     try {
+      let currentRef = resumeRef;
+      const resumeName = resume.personalInfo?.name || 'Untitled Resume';
+      
+      const payload = {
+        name: resumeName,
+        data: resume,
+        updatedAt: serverTimestamp()
+      };
+
+      if (currentRef) {
+        await updateDoc(currentRef, payload);
+      } else {
+        payload.createdAt = serverTimestamp();
+        currentRef = await addDoc(collection(db, 'users', currentUser.uid, 'resumes'), payload);
+        setResumeRef(currentRef);
+        navigate(`/editor?id=${currentRef.id}`, { replace: true });
+      }
+
+      // Keep legacy save updated so the main Dashboard still shows the most recent resume data
       const userRef = doc(db, 'users', currentUser.uid);
       await updateDoc(userRef, { resume });
+
       setSaved(true);
       await refreshUserData();
       setTimeout(() => setSaved(false), 3000);

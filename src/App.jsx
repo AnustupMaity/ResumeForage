@@ -11,6 +11,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminPayments from './pages/AdminPayments';
 import SupportPage from './pages/SupportPage';
 import AdminSupportPage from './pages/AdminSupportPage';
+import MyResumesPage from './pages/MyResumesPage';
 
 function ProtectedRoute({ children }) {
   const { currentUser, loading } = useAuth();
@@ -63,6 +64,9 @@ function AppContent() {
         } />
         <Route path="/dashboard" element={
           <ProtectedRoute><DashboardPage /></ProtectedRoute>
+        } />
+        <Route path="/resumes" element={
+          <ProtectedRoute><MyResumesPage /></ProtectedRoute>
         } />
         <Route path="/editor" element={
           <ProtectedRoute><ResumeEditor /></ProtectedRoute>
