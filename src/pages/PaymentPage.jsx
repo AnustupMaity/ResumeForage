@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
 import { QRCodeSVG } from 'qrcode.react';
