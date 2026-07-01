@@ -224,17 +224,16 @@
 .resume-preview-scaler {
   transform-origin: top center;
 }
-.resume-page p { margin: 0; display: inline; }
+.resume-page p, .resume-page div { margin: 0; display: inline; }
 .project-desc-inline, .project-desc-inline * {
   display: inline !important;
   margin: 0 !important;
   padding: 0 !important;
 }
-.resume-page, .resume-page * {
+.resume-page, .resume-page *:not(i):not(svg):not(path):not(.resume-link) {
   white-space: normal !important;
-  word-wrap: break-word !important;
-  overflow-wrap: break-word !important;
   word-break: normal !important;
+  overflow-wrap: normal !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -245,14 +244,13 @@
   background: transparent !important;
   background-color: transparent !important;
 }
-.resume-page * {
+.resume-page *:not(i):not(svg):not(path) {
   color: inherit !important;
   font-family: inherit !important;
 }
 .resume-page a, .resume-page a.resume-link {
   color: var(--theme-accent, #007bff) !important;
 }
-
 /* --- Dynamic Spacing Overrides --- */
 .resume-page .resume-list > li {
   margin-bottom: var(--item-gap, 3pt) !important;

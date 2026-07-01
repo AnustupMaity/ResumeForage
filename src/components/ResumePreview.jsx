@@ -2,6 +2,13 @@ import { useRef, useEffect, useState } from 'react';
 import { normalizeSkills } from '../utils/skillsUtils';
 import '../styles/resumeTemplate.css';
 
+function cleanInlineHtml(html) {
+  if (!html) return '';
+  let cleaned = String(html).trim();
+  cleaned = cleaned.replace(/<\/?(p|div)[^>]*>/gi, ' ').replace(/(<br\s*\/?>\s*)+/gi, ' ').replace(/\s+/g, ' ').trim();
+  return cleaned;
+}
+
 export default function ResumePreview({ resume, themeId = 'latex', updateField }) {
   const wrapperRef = useRef(null);
   const [dynamicScale, setDynamicScale] = useState(1);
@@ -134,7 +141,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
                   {proj.description && (
                     <span className="project-desc-inline">
                       {' '}-{' '}
-                      <span dangerouslySetInnerHTML={{ __html: proj.description }} />
+                      <span dangerouslySetInnerHTML={{ __html: cleanInlineHtml(proj.description) }} />
                     </span>
                   )}
                 </li>
@@ -159,7 +166,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
                   {exp.bullets && exp.bullets.length > 0 && (
                     <ul className="resume-sublist">
                       {exp.bullets.map((b, j) => (
-                        <li key={j} dangerouslySetInnerHTML={{ __html: b }}></li>
+                        <li key={j} dangerouslySetInnerHTML={{ __html: cleanInlineHtml(b) }}></li>
                       ))}
                     </ul>
                   )}
@@ -180,7 +187,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
                   <li key={i}>
                     {ach.bold && <strong>{ach.bold}</strong>}
                     {ach.bold && ach.text ? ' ' : ''}
-                    <span dangerouslySetInnerHTML={{ __html: ach.text || '' }} />
+                    <span dangerouslySetInnerHTML={{ __html: cleanInlineHtml(ach.text || '') }} />
                     {ach.link && (
                       <span style={{ whiteSpace: 'nowrap' }}>{' '}|{' '}<a className="resume-link" href={ach.link} target="_blank" rel="noreferrer">LINK</a></span>
                     )}
@@ -192,7 +199,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
                   <li key={i}>
                     {ach.bold && <strong>{ach.bold}</strong>}
                     {ach.bold && ach.text ? ' ' : ''}
-                    <span dangerouslySetInnerHTML={{ __html: ach.text || '' }} />
+                    <span dangerouslySetInnerHTML={{ __html: cleanInlineHtml(ach.text || '') }} />
                     {ach.link && (
                       <span style={{ whiteSpace: 'nowrap' }}>{' '}|{' '}<a className="resume-link" href={ach.link} target="_blank" rel="noreferrer">LINK</a></span>
                     )}
@@ -232,7 +239,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
                   <div className="resume-section-title">{section.title}</div>
                   <ul className="resume-list">
                     {section.items.map((item, i) => (
-                      <li key={i} dangerouslySetInnerHTML={{ __html: item }}></li>
+                      <li key={i} dangerouslySetInnerHTML={{ __html: cleanInlineHtml(item) }}></li>
                     ))}
                   </ul>
                 </div>

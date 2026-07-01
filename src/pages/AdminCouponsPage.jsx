@@ -221,17 +221,20 @@ export default function AdminCouponsPage() {
 
   return (
     <div className="admin-page">
-      <div className="container" style={{ paddingTop: '32px', paddingBottom: '64px' }}>
-        <div className="coupons-header">
+      <div className="page-container">
+        <div className="dashboard-header animate-fade-in-up" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <h1 className="dot-font" style={{ fontSize: '2rem', marginBottom: '4px' }}>
-              <i className="fas fa-ticket-alt" style={{ color: 'var(--accent-primary-light)' }}></i> Manage Promo Coupons
-            </h1>
-            <p style={{ color: 'var(--text-muted)' }}>Create, edit, and track promo codes for subscription checkouts</p>
+            <h2 className="dot-font"><i className="fas fa-ticket"></i> Manage Promo Coupons</h2>
+            <p>Create, edit, and track promo codes for subscription checkouts.</p>
           </div>
-          <button className="btn btn-primary btn-lg" onClick={() => handleOpenModal()}>
-            <i className="fas fa-plus-circle"></i> Create New Coupon
-          </button>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <button className="btn btn-primary" onClick={() => handleOpenModal()}>
+              <i className="fas fa-plus-circle"></i> Create New Coupon
+            </button>
+            <button className="btn btn-secondary" onClick={() => navigate('/admin')}>
+              <i className="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+          </div>
         </div>
 
         {/* Stats */}
@@ -255,7 +258,7 @@ export default function AdminCouponsPage() {
           <div className="loading-screen" style={{ height: '200px' }}><div className="spinner"></div></div>
         ) : coupons.length === 0 ? (
           <div className="glass-card empty-state">
-            <i className="fas fa-ticket-alt"></i>
+            <i className="fas fa-ticket"></i>
             <h3>No Coupons Created Yet</h3>
             <p>Click "Create New Coupon" to generate your first discount code.</p>
           </div>
