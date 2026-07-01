@@ -41,6 +41,9 @@ export function parseLatex(latexCode) {
         resume.personalInfo.linkedin = url.trim();
       } else if (icon === 'github') {
         resume.personalInfo.github = url.trim();
+      } else if (url || display) {
+        if (!resume.personalInfo.customLinks) resume.personalInfo.customLinks = [];
+        resume.personalInfo.customLinks.push({ label: display.trim() || icon, value: url.trim() || display.trim() });
       }
     }
 

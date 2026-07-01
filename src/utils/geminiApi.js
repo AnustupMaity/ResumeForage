@@ -26,7 +26,7 @@ export async function parseResumeWithAI(text, apiKey) {
   You are an expert resume parser. Extract the following resume text into a JSON object.
   The JSON structure MUST EXACTLY match this schema:
   {
-    "personalInfo": { "name": "", "email": "", "phone": "", "linkedin": "", "github": "" },
+    "personalInfo": { "name": "", "email": "", "phone": "", "linkedin": "", "github": "", "customLinks": [ { "label": "", "value": "" } ] },
     "education": [ { "institution": "", "duration": "", "degree": "", "note": "" } ],
     "skills": { "languages": "", "frameworksMlDl": "", "frameworksDev": "", "toolkit": "", "platforms": "", "softSkills": "", "interests": "" },
     "projects": [ { "name": "", "link": "", "liveLink": "", "description": "" } ],
@@ -117,7 +117,7 @@ export async function applyGlobalInstruction(resumeJson, instruction) {
   
   The output MUST EXACTLY match this JSON schema:
   {
-    "personalInfo": { "name": "", "email": "", "phone": "", "linkedin": "", "github": "" },
+    "personalInfo": { "name": "", "email": "", "phone": "", "linkedin": "", "github": "", "customLinks": [ { "label": "", "value": "" } ] },
     "education": [ { "institution": "", "duration": "", "degree": "", "note": "" } ],
     "skills": { "languages": "", "frameworksMlDl": "", "frameworksDev": "", "toolkit": "", "platforms": "", "softSkills": "", "interests": "" },
     "projects": [ { "name": "", "link": "", "liveLink": "", "description": "" } ],

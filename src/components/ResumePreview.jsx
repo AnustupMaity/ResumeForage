@@ -321,47 +321,86 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
             <div className="resume-name">{personalInfo.name}</div>
           )}
 
-          {(personalInfo?.email || personalInfo?.phone || personalInfo?.linkedin || personalInfo?.github) && (
-            <div className="resume-contact">
-              {personalInfo.email && (
-                <span className="contact-item">
-                  <i className="fas fa-envelope"></i>
-                  <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a>
-                </span>
-              )}
-              {personalInfo.phone && (
-                <>
-                  {personalInfo.email && <span className="contact-sep">|</span>}
-                  <span className="contact-item">
-                    <i className="fas fa-phone"></i>
-                    <a href={`tel:${personalInfo.phone}`}>{personalInfo.phone}</a>
+          {(() => {
+            const items = [];
+            if (personalInfo?.email) {
+              items.push({
+                icon: 'fas fa-envelope',
+                content: <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a>
+              });
+            }
+            if (personalInfo?.phone) {
+              items.push({
+                icon: 'fas fa-phone',
+                content: <a href={`tel:${personalInfo.phone}`}>{personalInfo.phone}</a>
+              });
+            }
+            if (personalInfo?.linkedin) {
+              const url = personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://linkedin.com/in/${personalInfo.linkedin}`;
+              const text = personalInfo.linkedin.replace(/https?:\/\/(www\.)?linkedin\.com\/in\//i, '').replace(/\/$/, '');
+              items.push({
+                icon: 'fab fa-linkedin',
+                content: <a href={url} target="_blank" rel="noreferrer">{text}</a>
+              });
+            }
+            if (personalInfo?.github) {
+              const url = personalInfo.github.startsWith('http') ? personalInfo.github : `https://github.com/${personalInfo.github}`;
+              const text = personalInfo.github.replace(/https?:\/\/(www\.)?github\.com\//i, '').replace(/\/$/, '');
+              items.push({
+                icon: 'fab fa-github',
+                content: <a href={url} target="_blank" rel="noreferrer">{text}</a>
+              });
+            }
+            if (Array.isArray(personalInfo?.customLinks)) {
+              personalInfo.customLinks.forEach(link => {
+                if (!link || (!link.value && !link.label)) return;
+                const val = (link.value || '').trim();
+                const lbl = (link.label || '').trim();
+                if (!val && !lbl) return;
+                
+                let iconClass = 'fas fa-link';
+                const lower = (lbl + ' ' + val).toLowerCase();
+                if (lower.includes('portfolio') || lower.includes('website') || lower.includes('site') || lower.includes('.dev') || lower.includes('.com') || lower.includes('.io') || lower.includes('.org') || lower.includes('.net')) iconClass = 'fas fa-globe';
+                else if (lower.includes('twitter') || lower.includes('x.com')) iconClass = 'fab fa-twitter';
+                else if (lower.includes('leetcode')) iconClass = 'fas fa-code';
+                else if (lower.includes('hackerrank')) iconClass = 'fab fa-hackerrank';
+                else if (lower.includes('medium') || lower.includes('blog')) iconClass = 'fab fa-medium';
+                else if (lower.includes('location') || lower.includes('address') || lower.includes('city') || lower.includes('state') || lower.includes('country') || lower.includes('india') || lower.includes('usa')) iconClass = 'fas fa-map-marker-alt';
+
+                let content;
+                if (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('www.')) {
+                  const href = val.startsWith('www.') ? `https://${val}` : val;
+                  const display = lbl || val.replace(/https?:\/\/(www\.)?/i, '').replace(/\/$/, '');
+                  content = <a href={href} target="_blank" rel="noreferrer">{display}</a>;
+                } else if (val && lbl) {
+                  content = <span><strong>{lbl}:</strong> {val}</span>;
+                } else {
+                  content = <span>{val || lbl}</span>;
+                }
+
+                items.push({
+                  icon: link.icon || iconClass,
+                  content
+                });
+              });
+            }
+
+            if (items.length === 0) return null;
+
+            return (
+              <div className="resume-contact">
+                {items.map((item, index) => (
+                  <span key={index} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    {index > 0 && <span className="contact-sep" style={{ margin: '0 6px' }}>|</span>}
+                    <span className="contact-item">
+                      {item.icon && <i className={item.icon} style={{ marginRight: '4px' }}></i>}
+                      {item.content}
+                    </span>
                   </span>
-                </>
-              )}
-              {personalInfo.linkedin && (
-                <>
-                  {(personalInfo.email || personalInfo.phone) && <span className="contact-sep">|</span>}
-                  <span className="contact-item">
-                    <i className="fab fa-linkedin"></i>
-                    <a href={personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://linkedin.com/in/${personalInfo.linkedin}`} target="_blank" rel="noreferrer">
-                      {personalInfo.linkedin.replace(/https?:\/\/(www\.)?linkedin\.com\/in\//i, '')}
-                    </a>
-                  </span>
-                </>
-              )}
-              {personalInfo.github && (
-                <>
-                  {(personalInfo.email || personalInfo.phone || personalInfo.linkedin) && <span className="contact-sep">|</span>}
-                  <span className="contact-item">
-                    <i className="fab fa-github"></i>
-                    <a href={personalInfo.github.startsWith('http') ? personalInfo.github : `https://github.com/${personalInfo.github}`} target="_blank" rel="noreferrer">
-                      {personalInfo.github.replace(/https?:\/\/(www\.)?github\.com\//i, '')}
-                    </a>
-                  </span>
-                </>
-              )}
-            </div>
-          )}
+                ))}
+              </div>
+            );
+          })()}
 
           {/* Render sections based on user's custom order */}
           {sectionOrder.map((sectionKey, idx) => renderInteractiveSection(sectionKey, idx))}

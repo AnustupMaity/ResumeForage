@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { doc, updateDoc, collection, addDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -86,8 +86,10 @@ export default function ResumeEditor() {
   const resumeId = searchParams.get('id');
   const [resumeRef, setResumeRef] = useState(null);
   const [resume, setResume] = useState(null);
-  const [history, setHistory] = useState([]);
-  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [history, setHistoryState] = useState([]);
+  const [historyIndex, setHistoryIndexState] = useState(-1);
+  const historyRef = useRef([]);
+  const historyIndexRef = useRef(-1);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [activeSection, setActiveSection] = useState('personalInfo');
@@ -98,27 +100,62 @@ export default function ResumeEditor() {
 
   const pushToHistory = useCallback((currentState) => {
     if (!currentState) return;
-    setHistory(prev => {
-      const newHistory = prev.slice(0, historyIndex + 1);
-      newHistory.push(JSON.parse(JSON.stringify(currentState)));
-      return newHistory;
-    });
-    setHistoryIndex(prev => prev + 1);
-  }, [historyIndex]);
-
-  const undo = () => {
-    if (historyIndex > 0) {
-      setHistoryIndex(prev => prev - 1);
-      setResume(JSON.parse(JSON.stringify(history[historyIndex - 1])));
+    const currentIdx = historyIndexRef.current;
+    const currentHist = historyRef.current;
+    const newHistory = currentHist.slice(0, currentIdx + 1);
+    newHistory.push(JSON.parse(JSON.stringify(currentState)));
+    if (newHistory.length > 50) {
+      newHistory.shift();
+      historyIndexRef.current = newHistory.length - 1;
+      setHistoryIndexState(newHistory.length - 1);
+    } else {
+      historyIndexRef.current = currentIdx + 1;
+      setHistoryIndexState(currentIdx + 1);
     }
-  };
+    historyRef.current = newHistory;
+    setHistoryState(newHistory);
+  }, []);
 
-  const redo = () => {
-    if (historyIndex < history.length - 1) {
-      setHistoryIndex(prev => prev + 1);
-      setResume(JSON.parse(JSON.stringify(history[historyIndex + 1])));
+  const undo = useCallback(() => {
+    const currentIdx = historyIndexRef.current;
+    const currentHist = historyRef.current;
+    if (currentIdx > 0) {
+      const newIdx = currentIdx - 1;
+      historyIndexRef.current = newIdx;
+      setHistoryIndexState(newIdx);
+      setResume(JSON.parse(JSON.stringify(currentHist[newIdx])));
     }
-  };
+  }, []);
+
+  const redo = useCallback(() => {
+    const currentIdx = historyIndexRef.current;
+    const currentHist = historyRef.current;
+    if (currentIdx < currentHist.length - 1) {
+      const newIdx = currentIdx + 1;
+      historyIndexRef.current = newIdx;
+      setHistoryIndexState(newIdx);
+      setResume(JSON.parse(JSON.stringify(currentHist[newIdx])));
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
+        if (e.shiftKey) {
+          e.preventDefault();
+          redo();
+        } else {
+          e.preventDefault();
+          undo();
+        }
+      } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        redo();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [undo, redo]);
 
   const handleImport = useCallback((importedData) => {
     setResume(prev => {
@@ -141,26 +178,32 @@ export default function ResumeEditor() {
   useEffect(() => {
     if (!currentUser || !userData) return;
 
-    if (resumeId && !resume && history.length === 0) {
+    if (resumeId && !resume && historyRef.current.length === 0) {
       getDoc(doc(db, 'users', currentUser.uid, 'resumes', resumeId)).then(rDoc => {
         if (rDoc.exists()) {
           const dbResume = rDoc.data().data || rDoc.data();
           setResume(dbResume);
-          setHistory([JSON.parse(JSON.stringify(dbResume))]);
-          setHistoryIndex(0);
+          const initHist = [JSON.parse(JSON.stringify(dbResume))];
+          historyRef.current = initHist;
+          historyIndexRef.current = 0;
+          setHistoryState(initHist);
+          setHistoryIndexState(0);
           setResumeRef(doc(db, 'users', currentUser.uid, 'resumes', resumeId));
         } else {
           alert('Resume not found!');
           navigate('/resumes');
         }
       }).catch(console.error);
-    } else if (!resumeId && userData.resume && !resume && history.length === 0) {
+    } else if (!resumeId && userData.resume && !resume && historyRef.current.length === 0) {
       const initialResume = JSON.parse(JSON.stringify(userData.resume));
       setResume(initialResume);
-      setHistory([initialResume]);
-      setHistoryIndex(0);
+      const initHist = [initialResume];
+      historyRef.current = initHist;
+      historyIndexRef.current = 0;
+      setHistoryState(initHist);
+      setHistoryIndexState(0);
     }
-  }, [currentUser, userData, resumeId, resume, history.length, navigate]);
+  }, [currentUser, userData, resumeId, resume, navigate]);
 
   const updateField = useCallback((path, value) => {
     setResume(prev => {
@@ -363,10 +406,10 @@ export default function ResumeEditor() {
         <div className="editor-toolbar">
           <h3 className="dot-font"><i className="fas fa-edit"></i> Resume Editor</h3>
           <div className="toolbar-actions">
-            <button className="btn btn-icon btn-secondary" onClick={undo} disabled={historyIndex <= 0} title="Undo">
+            <button className="btn btn-icon btn-secondary" onClick={undo} disabled={historyIndex <= 0} title="Undo (Ctrl+Z)">
               <i className="fas fa-undo"></i>
             </button>
-            <button className="btn btn-icon btn-secondary" onClick={redo} disabled={historyIndex >= history.length - 1} title="Redo">
+            <button className="btn btn-icon btn-secondary" onClick={redo} disabled={historyIndex >= history.length - 1} title="Redo (Ctrl+Y)">
               <i className="fas fa-redo"></i>
             </button>
             <div style={{ width: '1px', height: '24px', background: 'var(--border-subtle)', margin: '0 4px' }}></div>
@@ -427,7 +470,7 @@ export default function ResumeEditor() {
         {/* Section forms */}
         <div className="editor-form">
           {activeSection === 'personalInfo' && (
-            <PersonalInfoForm resume={resume} updateField={updateField} />
+            <PersonalInfoForm resume={resume} updateField={updateField} addToArray={addToArray} removeFromArray={removeFromArray} />
           )}
           {activeSection === 'education' && (
             <EducationForm resume={resume} updateField={updateField} addToArray={addToArray} removeFromArray={removeFromArray} />
@@ -490,7 +533,7 @@ export default function ResumeEditor() {
 
 /* ---- Section Form Components ---- */
 
-function PersonalInfoForm({ resume, updateField }) {
+function PersonalInfoForm({ resume, updateField, addToArray, removeFromArray }) {
   const p = resume.personalInfo || {};
   return (
     <div className="form-section animate-fade-in">
@@ -517,6 +560,56 @@ function PersonalInfoForm({ resume, updateField }) {
           <label className="form-label">GitHub (username or URL)</label>
           <input className="form-input" value={p.github || ''} onChange={e => updateField('personalInfo.github', e.target.value)} placeholder="johndoe" />
         </div>
+      </div>
+
+      <div style={{ marginTop: '24px', borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <div>
+            <h5 style={{ margin: 0, fontSize: '0.95rem', color: 'var(--accent-primary-light)' }}><i className="fas fa-link"></i> Additional Links & Contact Items</h5>
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Portfolio website, LeetCode, Twitter, location / address, etc.</span>
+          </div>
+          <button
+            type="button"
+            className="btn btn-sm btn-outline"
+            onClick={() => {
+              if (!p.customLinks) updateField('personalInfo.customLinks', []);
+              addToArray('personalInfo.customLinks', { label: '', value: '', icon: '' });
+            }}
+          >
+            <i className="fas fa-plus"></i> Add Item
+          </button>
+        </div>
+
+        {(p.customLinks || []).map((link, i) => (
+          <div key={i} className="entry-card glass-card" style={{ marginBottom: '12px', padding: '12px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--accent-primary)' }}>Custom Item #{i + 1}</span>
+              <button type="button" className="btn btn-xs btn-danger" onClick={() => removeFromArray('personalInfo.customLinks', i)}>
+                <i className="fas fa-trash"></i>
+              </button>
+            </div>
+            <div className="form-grid" style={{ gridTemplateColumns: '1fr 2fr' }}>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label" style={{ fontSize: '0.75rem' }}>Header / Label (e.g. Portfolio)</label>
+                <input
+                  className="form-input"
+                  value={link.label || ''}
+                  onChange={e => updateField(`personalInfo.customLinks.${i}.label`, e.target.value)}
+                  placeholder="Portfolio"
+                />
+              </div>
+              <div className="form-group" style={{ marginBottom: 0 }}>
+                <label className="form-label" style={{ fontSize: '0.75rem' }}>Link or Text (e.g. https://mywebsite.com)</label>
+                <input
+                  className="form-input"
+                  value={link.value || ''}
+                  onChange={e => updateField(`personalInfo.customLinks.${i}.value`, e.target.value)}
+                  placeholder="https://anustupmaity.dev or Kolkata, India"
+                />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

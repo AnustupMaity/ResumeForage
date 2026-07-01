@@ -88,6 +88,23 @@ export function generateLatex(resume) {
     const githubUrl = p.github.startsWith('http') ? p.github : `https://github.com/${p.github}`;
     contacts.push(`\\href{${githubUrl}}{GitHub}`);
   }
+  if (Array.isArray(p.customLinks)) {
+    p.customLinks.forEach(link => {
+      if (!link || (!link.value && !link.label)) return;
+      const val = (link.value || '').trim();
+      const lbl = (link.label || '').trim();
+      if (!val && !lbl) return;
+      if (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('www.')) {
+        const href = val.startsWith('www.') ? `https://${val}` : val;
+        const display = lbl || val.replace(/https?:\/\/(www\.)?/i, '').replace(/\/$/, '');
+        contacts.push(`\\href{${href}}{${display}}`);
+      } else if (val && lbl) {
+        contacts.push(`\\textbf{${lbl}:} ${val}`);
+      } else {
+        contacts.push(`${val || lbl}`);
+      }
+    });
+  }
   
   if (contacts.length > 0) {
     latex += `${contacts.join(' $|$ ')}\n\\end{center}\n\n`;
