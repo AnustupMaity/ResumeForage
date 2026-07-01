@@ -40,6 +40,38 @@
   margin-bottom: var(--space-lg);
   padding-bottom: var(--space-md);
   border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.section-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-family: var(--font-dot, var(--font-sans));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.section-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-glass);
+  border-color: var(--text-muted);
+}
+
+.section-tab.active {
+  color: var(--accent-primary-light, #6c63ff);
+  background: rgba(108, 99, 255, 0.15);
+  border-color: rgba(108, 99, 255, 0.4);
 }
 
 /* Payments list */
