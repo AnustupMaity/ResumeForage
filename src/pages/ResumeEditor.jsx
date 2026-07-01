@@ -9,8 +9,9 @@ import AtsChecker from '../components/AtsChecker';
 import CoverLetterGenerator from '../components/CoverLetterGenerator';
 import { rewriteBulletPoint, applyGlobalInstruction } from '../utils/geminiApi';
 import { generateLatex } from '../utils/latexGenerator';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import { normalizeSkills } from '../utils/skillsUtils';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import './ResumeEditor.css';
 
 const quillModules = {
@@ -562,41 +563,104 @@ function EducationForm({ resume, updateField, addToArray, removeFromArray }) {
 }
 
 function SkillsForm({ resume, updateField }) {
-  const s = resume.skills || {};
+  const skillsList = normalizeSkills(resume.skills);
+
+  const handleUpdate = (index, field, val) => {
+    const newList = [...skillsList];
+    newList[index] = { ...newList[index], [field]: val };
+    updateField('skills', newList);
+  };
+
+  const handleAddCategory = () => {
+    const newCat = { id: `custom_${Date.now()}`, label: 'New Category', value: '' };
+    updateField('skills', [...skillsList, newCat]);
+  };
+
+  const handleRemoveCategory = (index) => {
+    const newList = [...skillsList];
+    newList.splice(index, 1);
+    updateField('skills', newList);
+  };
+
+  const handleMoveUp = (index) => {
+    if (index === 0) return;
+    const newList = [...skillsList];
+    const temp = newList[index - 1];
+    newList[index - 1] = newList[index];
+    newList[index] = temp;
+    updateField('skills', newList);
+  };
+
+  const handleMoveDown = (index) => {
+    if (index === skillsList.length - 1) return;
+    const newList = [...skillsList];
+    const temp = newList[index + 1];
+    newList[index + 1] = newList[index];
+    newList[index] = temp;
+    updateField('skills', newList);
+  };
+
   return (
     <div className="form-section animate-fade-in">
       <h4 className="form-section-title">Skills Summary</h4>
-      <p className="form-section-desc">List your technical skills, frameworks, and tools.</p>
-      <div className="form-stack">
-        <div className="form-group">
-          <label className="form-label">Languages</label>
-          <input className="form-input" value={s.languages || ''} onChange={e => updateField('skills.languages', e.target.value)} placeholder="Python, C, JavaScript, SQL" />
+      <p className="form-section-desc">Add, edit, delete, or rearrange your technical skills and tool categories.</p>
+      {skillsList.map((skill, index) => (
+        <div key={skill.id || index} className="entry-card glass-card">
+          <div className="entry-header">
+            <span className="entry-number">#{index + 1} {skill.label || 'Category'}</span>
+            <div style={{ display: 'flex', gap: '0.4rem' }}>
+              <button
+                className="btn btn-sm btn-outline"
+                onClick={() => handleMoveUp(index)}
+                disabled={index === 0}
+                title="Move Up"
+                style={{ padding: '0.2rem 0.5rem' }}
+              >
+                <i className="fas fa-arrow-up"></i>
+              </button>
+              <button
+                className="btn btn-sm btn-outline"
+                onClick={() => handleMoveDown(index)}
+                disabled={index === skillsList.length - 1}
+                title="Move Down"
+                style={{ padding: '0.2rem 0.5rem' }}
+              >
+                <i className="fas fa-arrow-down"></i>
+              </button>
+              <button
+                className="btn btn-sm btn-danger"
+                onClick={() => handleRemoveCategory(index)}
+                title="Delete Category"
+              >
+                <i className="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          <div className="form-stack">
+            <div className="form-group">
+              <label className="form-label">Category Name</label>
+              <input
+                className="form-input"
+                value={skill.label || ''}
+                onChange={e => handleUpdate(index, 'label', e.target.value)}
+                placeholder="e.g. Languages, Frameworks, Soft Skills..."
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Skills / Tools</label>
+              <input
+                className="form-input"
+                value={skill.value || ''}
+                onChange={e => handleUpdate(index, 'value', e.target.value)}
+                placeholder="e.g. Python, C, JavaScript, SQL..."
+              />
+            </div>
+          </div>
         </div>
-        <div className="form-group">
-          <label className="form-label">Frameworks — ML/DL</label>
-          <input className="form-input" value={s.frameworksMlDl || ''} onChange={e => updateField('skills.frameworksMlDl', e.target.value)} placeholder="Pandas, NumPy, TensorFlow, PyTorch" />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Frameworks — Development</label>
-          <input className="form-input" value={s.frameworksDev || ''} onChange={e => updateField('skills.frameworksDev', e.target.value)} placeholder="Django, Flask, ReactJS, Vue.js" />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Toolkit</label>
-          <input className="form-input" value={s.toolkit || ''} onChange={e => updateField('skills.toolkit', e.target.value)} placeholder="GIT, PostgreSQL, MongoDB, Firebase" />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Platforms</label>
-          <input className="form-input" value={s.platforms || ''} onChange={e => updateField('skills.platforms', e.target.value)} placeholder="VS Code, Jupyter Notebook, Linux" />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Soft Skills</label>
-          <input className="form-input" value={s.softSkills || ''} onChange={e => updateField('skills.softSkills', e.target.value)} placeholder="Leadership, Team Work, Public Speaking" />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Interests</label>
-          <input className="form-input" value={s.interests || ''} onChange={e => updateField('skills.interests', e.target.value)} placeholder="Machine Learning, Web Development" />
-        </div>
-      </div>
+      ))}
+      <button className="btn btn-outline btn-sm" onClick={handleAddCategory}>
+        <i className="fas fa-plus"></i> Add Category
+      </button>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { normalizeSkills } from './skillsUtils';
+
 /**
  * LaTeX Generator
  * Converts resume data object into compilable LaTeX source code.
@@ -101,22 +103,12 @@ export function generateLatex(resume) {
     }
 
     if (section === 'skills' && resume.skills) {
-      const s = resume.skills;
-      const hasSkills = s.languages || s.frameworksMlDl || s.frameworksDev || s.toolkit || s.platforms || s.softSkills || s.interests;
-      if (hasSkills) {
+      const skillsList = normalizeSkills(resume.skills).filter(item => item.value && String(item.value).trim() !== '');
+      if (skillsList.length > 0) {
         latex += `\\section*{Skills Summary}\n\\hrule\n\\vspace{0.2cm}\n\\begin{itemize}[leftmargin=*]\n`;
-        if (s.languages) latex += `  \\item \\textbf{Languages:} ${s.languages}\n`;
-        if (s.frameworksMlDl || s.frameworksDev) {
-          latex += `  \\item \\textbf{Frameworks:}\n`;
-          latex += `  \\begin{itemize}\n`;
-          if (s.frameworksMlDl) latex += `    \\item \\textbf{ML/DL:} ${s.frameworksMlDl}\n`;
-          if (s.frameworksDev) latex += `    \\item \\textbf{Development:} ${s.frameworksDev}\n`;
-          latex += `  \\end{itemize}\n`;
-        }
-        if (s.toolkit) latex += `  \\item \\textbf{Toolkit:} ${s.toolkit}\n`;
-        if (s.platforms) latex += `  \\item \\textbf{Platforms:} ${s.platforms}\n`;
-        if (s.softSkills) latex += `  \\item \\textbf{Soft Skills:} ${s.softSkills}\n`;
-        if (s.interests) latex += `  \\item \\textbf{Interests:} ${s.interests}\n`;
+        skillsList.forEach(item => {
+          latex += `  \\item \\textbf{${htmlToLatex(item.label || 'Category')}:} ${htmlToLatex(item.value)}\n`;
+        });
         latex += `\\end{itemize}\n\n`;
       }
     }

@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
+import { normalizeSkills } from '../utils/skillsUtils';
 import '../styles/resumeTemplate.css';
 
 export default function ResumePreview({ resume, themeId = 'latex' }) {
@@ -45,9 +46,17 @@ export default function ResumePreview({ resume, themeId = 'latex' }) {
   };
 
   const hasContent = (section) => {
-    if (Array.isArray(section)) return section.length > 0;
+    if (Array.isArray(section)) {
+      return section.some(item => {
+        if (typeof item === 'object' && item !== null) {
+          if ('value' in item) return !!(item.value && String(item.value).trim() !== '');
+          return Object.values(item).some(v => v && String(v).trim() !== '');
+        }
+        return !!item;
+      });
+    }
     if (typeof section === 'object' && section !== null) {
-      return Object.values(section).some(v => v && v.length > 0);
+      return Object.values(section).some(v => v && String(v).trim() !== '');
     }
     return !!section;
   };
@@ -76,43 +85,22 @@ export default function ResumePreview({ resume, themeId = 'latex' }) {
           </div>
         );
 
-      case 'skills':
-        if (!hasContent(skills)) return null;
+      case 'skills': {
+        const skillsList = normalizeSkills(skills).filter(item => item.value && String(item.value).trim() !== '');
+        if (skillsList.length === 0) return null;
         return (
           <div key="skills" style={getSectionStyle('skills')}>
             <div className="resume-section-title">Skills Summary</div>
             <ul className="resume-list">
-              {skills.languages && (
-                <li><strong>Languages:</strong> {skills.languages}</li>
-              )}
-              {(skills.frameworksMlDl || skills.frameworksDev) && (
-                <li>
-                  <strong>Frameworks:</strong>
-                  <ul className="resume-skill-sub">
-                    {skills.frameworksMlDl && (
-                      <li><strong>ML/DL:</strong> {skills.frameworksMlDl}</li>
-                    )}
-                    {skills.frameworksDev && (
-                      <li><strong>Development:</strong> {skills.frameworksDev}</li>
-                    )}
-                  </ul>
+              {skillsList.map((item, idx) => (
+                <li key={item.id || idx}>
+                  <strong>{item.label || 'Category'}:</strong> {item.value}
                 </li>
-              )}
-              {skills.toolkit && (
-                <li><strong>Toolkit:</strong> {skills.toolkit}</li>
-              )}
-              {skills.platforms && (
-                <li><strong>Platforms:</strong> {skills.platforms}</li>
-              )}
-              {skills.softSkills && (
-                <li><strong>Soft Skills:</strong> {skills.softSkills}</li>
-              )}
-              {skills.interests && (
-                <li><strong>Interests:</strong> {skills.interests}</li>
-              )}
+              ))}
             </ul>
           </div>
         );
+      }
 
       case 'projects':
         if (!hasContent(projects)) return null;

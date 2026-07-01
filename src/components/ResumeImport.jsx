@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { parseLatex } from '../utils/latexParser';
 import { parseTextResume } from '../utils/textParser';
 import { parseResumeWithAI } from '../utils/geminiApi';
+import { normalizeSkills } from '../utils/skillsUtils';
 import * as pdfjsLib from 'pdfjs-dist';
 import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.mjs?url';
 import './ResumeImport.css';
@@ -125,14 +126,7 @@ export default function ResumeImport({ onImport, onClose }) {
     count += resume.achievements?.length || 0;
     count += resume.certifications?.length || 0;
     count += resume.customSections?.length || 0;
-    const s = resume.skills || {};
-    if (s.languages) count++;
-    if (s.frameworksMlDl) count++;
-    if (s.frameworksDev) count++;
-    if (s.toolkit) count++;
-    if (s.platforms) count++;
-    if (s.softSkills) count++;
-    if (s.interests) count++;
+    count += normalizeSkills(resume.skills).filter(s => s.value && String(s.value).trim() !== '').length;
     return count;
   }
 
@@ -305,13 +299,13 @@ export default function ResumeImport({ onImport, onClose }) {
               )}
 
               {/* Skills */}
-              {Object.values(preview.skills || {}).some(v => v) && (
+              {normalizeSkills(preview.skills).some(s => s.value && String(s.value).trim() !== '') && (
                 <div className="preview-section">
                   <h5><i className="fas fa-code"></i> Skills</h5>
                   <div className="preview-items">
-                    {preview.skills.languages && <div className="preview-item"><span>Languages:</span> {preview.skills.languages.slice(0, 60)}...</div>}
-                    {preview.skills.frameworksMlDl && <div className="preview-item"><span>ML/DL:</span> {preview.skills.frameworksMlDl.slice(0, 60)}...</div>}
-                    {preview.skills.frameworksDev && <div className="preview-item"><span>Dev:</span> {preview.skills.frameworksDev.slice(0, 60)}...</div>}
+                    {normalizeSkills(preview.skills).filter(s => s.value && String(s.value).trim() !== '').map((s, idx) => (
+                      <div key={idx} className="preview-item"><span>{s.label}:</span> {String(s.value).slice(0, 60)}...</div>
+                    ))}
                   </div>
                 </div>
               )}
