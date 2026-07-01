@@ -394,14 +394,15 @@ export default function ResumeEditor() {
   ];
 
   return (
-    <div className="editor-layout">
+    <>
       {/* Mobile preview toggle */}
       <button className="preview-toggle btn btn-primary btn-sm" onClick={() => setShowPreview(!showPreview)}>
         <i className={`fas ${showPreview ? 'fa-edit' : 'fa-eye'}`}></i>
         {showPreview ? 'Edit' : 'Preview'}
       </button>
 
-      {/* Left panel - Form */}
+      <div className="editor-layout">
+        {/* Left panel - Form */}
       <div className={`editor-panel ${showPreview ? 'hide-mobile' : ''}`}>
         <div className="editor-toolbar">
           <h3 className="dot-font"><i className="fas fa-edit"></i> Resume Editor</h3>
@@ -502,9 +503,10 @@ export default function ResumeEditor() {
         </div>
       </div>
 
-      {/* Right panel - Preview */}
-      <div className={`preview-panel ${showPreview ? '' : 'hide-mobile'}`}>
-        <ResumePreview resume={resume} themeId={resume.settings?.templateId || 'latex'} updateField={updateField} />
+        {/* Right panel - Preview */}
+        <div className={`preview-panel ${showPreview ? '' : 'hide-mobile'}`}>
+          <ResumePreview resume={resume} themeId={resume.settings?.templateId || 'latex'} updateField={updateField} />
+        </div>
       </div>
 
       {showImport && (
@@ -527,7 +529,7 @@ export default function ResumeEditor() {
           onClose={() => setShowCoverLetter(false)} 
         />
       )}
-    </div>
+    </>
   );
 }
 
