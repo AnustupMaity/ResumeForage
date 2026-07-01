@@ -225,6 +225,17 @@
   transform-origin: top center;
 }
 .resume-page p { margin: 0; display: inline; }
+.resume-page [style*="background"] {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+.resume-page * {
+  color: inherit !important;
+  font-family: inherit !important;
+}
+.resume-page a, .resume-page a.resume-link {
+  color: var(--theme-accent, #007bff) !important;
+}
 
 /* --- Dynamic Spacing Overrides --- */
 .resume-page .resume-list > li {

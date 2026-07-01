@@ -113,15 +113,29 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
             <div className="resume-section-title">Projects</div>
             <ul className="resume-list">
               {projects.map((proj, i) => (
-                <li key={i}>
-                  <strong>{proj.name}</strong>
-                  {proj.link && (
-                    <> | <a className="resume-link" href={proj.link} target="_blank" rel="noreferrer">LINK</a></>
+                <li key={i} style={{ marginBottom: '6px' }}>
+                  <div className="project-header" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', gap: '6px' }}>
+                    <strong style={{ fontWeight: 600 }}>{proj.name}</strong>
+                    {proj.link && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                        <span className="contact-sep" style={{ marginRight: '6px' }}>|</span>
+                        <a className="resume-link" href={proj.link} target="_blank" rel="noreferrer">
+                          <i className="fas fa-link" style={{ marginRight: '3px', fontSize: '0.85em' }}></i>LINK
+                        </a>
+                      </span>
+                    )}
+                    {proj.liveLink && (
+                      <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                        <span className="contact-sep" style={{ marginRight: '6px' }}>|</span>
+                        <a className="resume-link" href={proj.liveLink} target="_blank" rel="noreferrer">
+                          <i className="fas fa-external-link-alt" style={{ marginRight: '3px', fontSize: '0.85em' }}></i>Deployed LINK
+                        </a>
+                      </span>
+                    )}
+                  </div>
+                  {proj.description && (
+                    <div className="project-description" style={{ marginTop: '2px', display: 'block' }} dangerouslySetInnerHTML={{ __html: proj.description }} />
                   )}
-                  {proj.liveLink && (
-                    <> | <a className="resume-link" href={proj.liveLink} target="_blank" rel="noreferrer">Deployed LINK</a></>
-                  )}
-                  {proj.description && <span dangerouslySetInnerHTML={{ __html: proj.description }} />}
                 </li>
               ))}
             </ul>
@@ -167,7 +181,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
                     {ach.bold && ach.text ? ' ' : ''}
                     <span dangerouslySetInnerHTML={{ __html: ach.text || '' }} />
                     {ach.link && (
-                      <> | <a className="resume-link" href={ach.link} target="_blank" rel="noreferrer">LINK</a></>
+                      <span style={{ whiteSpace: 'nowrap' }}>{' '}|{' '}<a className="resume-link" href={ach.link} target="_blank" rel="noreferrer"><i className="fas fa-link" style={{ marginRight: '3px', fontSize: '0.85em' }}></i>LINK</a></span>
                     )}
                   </li>
                 ))}
@@ -179,7 +193,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
                     {ach.bold && ach.text ? ' ' : ''}
                     <span dangerouslySetInnerHTML={{ __html: ach.text || '' }} />
                     {ach.link && (
-                      <> | <a className="resume-link" href={ach.link} target="_blank" rel="noreferrer">LINK</a></>
+                      <span style={{ whiteSpace: 'nowrap' }}>{' '}|{' '}<a className="resume-link" href={ach.link} target="_blank" rel="noreferrer"><i className="fas fa-link" style={{ marginRight: '3px', fontSize: '0.85em' }}></i>LINK</a></span>
                     )}
                   </li>
                 ))}
@@ -199,7 +213,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
                   <strong>{cert.name}</strong>
                   {cert.provider && <> ({cert.provider})</>}
                   {cert.link && (
-                    <>: <a className="resume-link" href={cert.link} target="_blank" rel="noreferrer">CERTIFICATE LINK</a></>
+                    <span style={{ whiteSpace: 'nowrap' }}>{': '}<a className="resume-link" href={cert.link} target="_blank" rel="noreferrer"><i className="fas fa-certificate" style={{ marginRight: '3px', fontSize: '0.85em' }}></i>CERTIFICATE LINK</a></span>
                   )}
                 </li>
               ))}
