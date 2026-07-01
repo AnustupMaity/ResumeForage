@@ -12,6 +12,12 @@ function cleanInlineHtml(html) {
   return cleaned;
 }
 
+// Strips ALL HTML tags and returns pure plain text
+function stripAllHtml(html) {
+  if (!html) return '';
+  return String(html).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
 export default function ResumePreview({ resume, themeId = 'latex', updateField }) {
   const wrapperRef = useRef(null);
   const [dynamicScale, setDynamicScale] = useState(1);
@@ -141,12 +147,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
                       </a>
                     </span>
                   )}
-                  {proj.description && (
-                    <span className="project-desc-inline">
-                      {' '}-{' '}
-                      <span dangerouslySetInnerHTML={{ __html: cleanInlineHtml(proj.description) }} />
-                    </span>
-                  )}
+                  {proj.description && ` - ${stripAllHtml(proj.description)}`}
                 </li>
               ))}
             </ul>
