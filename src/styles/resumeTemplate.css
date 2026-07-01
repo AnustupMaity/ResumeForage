@@ -25,16 +25,16 @@
 }
 .theme-latex .resume-name {
   text-align: center;
-  font-size: 22pt;
+  font-size: 24pt;
   font-weight: bold;
-  color: rgb(40, 40, 40);
+  color: rgb(40, 40, 40) !important;
   margin-bottom: 4pt;
   letter-spacing: 0.5pt;
 }
 .theme-latex .resume-contact {
   text-align: center;
-  font-size: 9pt;
-  color: #333;
+  font-size: 9.5pt;
+  color: rgb(40, 40, 40);
   margin-bottom: 8pt;
   display: flex;
   align-items: center;
@@ -42,22 +42,32 @@
   flex-wrap: wrap;
   gap: 0;
 }
-.theme-latex .contact-item {
+.theme-latex .contact-item, .resume-contact .contact-item {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
-.theme-latex .contact-item i { font-size: 9pt; color: #555; }
-.theme-latex .contact-item a { color: rgb(0, 123, 255); text-decoration: none; }
-.theme-latex .contact-sep { margin: 0 8px; color: #888; }
+.theme-latex .contact-item i, .resume-contact .contact-item i, .resume-contact i {
+  font-size: 9.5pt !important;
+  color: rgb(40, 40, 40) !important;
+  opacity: 0.95 !important;
+}
+.theme-latex .contact-item a, .theme-latex .contact-item span, .resume-contact .contact-item a, .resume-contact .contact-item span {
+  color: rgb(0, 123, 255) !important;
+  text-decoration: none !important;
+}
+.theme-latex .contact-sep, .resume-contact .contact-sep {
+  margin: 0 8px !important;
+  color: rgb(40, 40, 40) !important;
+}
 .theme-latex .resume-section-title {
   font-size: 13pt;
   font-weight: bold;
-  color: rgb(0, 86, 179);
+  color: rgb(0, 86, 179) !important;
   text-transform: uppercase;
   font-variant: small-caps;
   letter-spacing: 0.5pt;
-  border-bottom: 1px solid rgb(0, 86, 179);
+  border-bottom: 1px solid rgb(0, 86, 179) !important;
   padding-bottom: 2pt;
   margin-top: 6pt;
   margin-bottom: 3pt;
@@ -254,14 +264,19 @@
   background: transparent !important;
   background-color: transparent !important;
 }
-/* Exclude icon elements (i, svg, path) so FontAwesome icons render */
+/* Force font-family inheritance across all text, excluding icons */
 .resume-page *:not(i):not(svg):not(path) {
-  color: inherit !important;
   font-family: inherit !important;
 }
-.resume-page a, .resume-page a.resume-link {
-  color: var(--theme-accent, #007bff) !important;
+/* Force color inheritance across pasted text, excluding icons, links, and contact items */
+.resume-page *:not(i):not(svg):not(path):not(a):not(.contact-item *):not(.contact-sep) {
+  color: inherit !important;
 }
+.resume-page a, .resume-page a.resume-link, .resume-page .resume-link {
+  color: rgb(0, 123, 255) !important;
+  text-decoration: none !important;
+}
+
 
 /* --- Dynamic Spacing Overrides --- */
 .resume-page .resume-list > li {

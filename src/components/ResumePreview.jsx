@@ -401,8 +401,9 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
                 else if (lower.includes('location') || lower.includes('address') || lower.includes('city') || lower.includes('state') || lower.includes('country') || lower.includes('india') || lower.includes('usa')) iconClass = 'fas fa-map-marker-alt';
 
                 let content;
-                if (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('www.')) {
-                  const href = val.startsWith('www.') ? `https://${val}` : val;
+                if (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('www.') || val.includes('.') || iconClass === 'fas fa-globe' || iconClass === 'fas fa-link' || iconClass === 'fab fa-twitter' || iconClass === 'fab fa-medium' || iconClass === 'fab fa-hackerrank') {
+                  const rawUrl = val || lbl;
+                  const href = rawUrl.startsWith('http://') || rawUrl.startsWith('https://') ? rawUrl : `https://${rawUrl.replace(/^www\./, '')}`;
                   const display = lbl || val.replace(/https?:\/\/(www\.)?/i, '').replace(/\/$/, '');
                   content = <a href={href} target="_blank" rel="noreferrer">{display}</a>;
                 } else if (val && lbl) {
