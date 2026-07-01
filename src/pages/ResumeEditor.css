@@ -1,10 +1,11 @@
 /* ===== Resume Editor Page Styles ===== */
 
 .editor-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  display: flex;
   height: calc(100vh - 65px);
   overflow: hidden;
+  width: 100%;
+  position: relative;
 }
 
 /* --- Left Panel (Form) --- */
@@ -14,8 +15,33 @@
   overflow: hidden;
   min-width: 0;
   min-height: 0;
-  border-right: 1px solid var(--border-subtle);
   background: var(--bg-primary);
+}
+
+/* --- Resizable Divider Handle --- */
+.resizer-handle {
+  width: 8px;
+  background: var(--border-subtle, #333);
+  cursor: col-resize;
+  flex-shrink: 0;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+.resizer-handle:hover, .resizer-handle:active {
+  background: var(--theme-accent, #007bff);
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.4);
+}
+.resizer-handle::after {
+  content: "";
+  width: 2px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 1px;
 }
 
 .editor-toolbar {

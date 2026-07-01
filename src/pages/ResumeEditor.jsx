@@ -97,6 +97,40 @@ export default function ResumeEditor() {
   const [showImport, setShowImport] = useState(false);
   const [showAtsChecker, setShowAtsChecker] = useState(false);
   const [showCoverLetter, setShowCoverLetter] = useState(false);
+  const [leftWidth, setLeftWidth] = useState(42); // 42% form, 58% preview (default split up to red line)
+  const isDraggingRef = useRef(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDraggingRef.current) return;
+      const newLeftWidth = (e.clientX / window.innerWidth) * 100;
+      if (newLeftWidth >= 20 && newLeftWidth <= 80) {
+        setLeftWidth(newLeftWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isDraggingRef.current) {
+        isDraggingRef.current = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    isDraggingRef.current = true;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
 
   const pushToHistory = useCallback((currentState) => {
     if (!currentState) return;
@@ -397,7 +431,7 @@ export default function ResumeEditor() {
     <>
       <div className="editor-layout">
         {/* Left panel - Form */}
-        <div className="editor-panel">
+        <div className="editor-panel" style={{ width: `${leftWidth}%`, flexShrink: 0 }}>
           <div className="editor-toolbar">
           <h3 className="dot-font"><i className="fas fa-edit"></i> Resume Editor</h3>
           <div className="toolbar-actions">
@@ -497,11 +531,18 @@ export default function ResumeEditor() {
         </div>
       </div>
 
-        {/* Right panel - Preview */}
-        <div className="preview-panel">
-          <ResumePreview resume={resume} themeId={resume.settings?.templateId || 'latex'} updateField={updateField} />
-        </div>
+      {/* Resizable Divider Handle */}
+      <div
+        className="resizer-handle"
+        onMouseDown={handleMouseDown}
+        title="Drag left/right to resize panels"
+      />
+
+      {/* Right panel - Preview */}
+      <div className="preview-panel" style={{ flex: 1, minWidth: 0 }}>
+        <ResumePreview resume={resume} themeId={resume.settings?.templateId || 'latex'} updateField={updateField} />
       </div>
+    </div>
 
       {showImport && (
         <ResumeImport 
