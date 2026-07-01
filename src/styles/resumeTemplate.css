@@ -225,6 +225,22 @@
   transform-origin: top center;
 }
 .resume-page p { margin: 0; display: inline; }
+.project-desc-inline, .project-desc-inline * {
+  display: inline !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.resume-page, .resume-page * {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  word-break: normal !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+.resume-link {
+  white-space: nowrap !important;
+}
 .resume-page [style*="background"] {
   background: transparent !important;
   background-color: transparent !important;

@@ -192,8 +192,8 @@ function parseProjects(content) {
   while ((match = itemRegex.exec(content)) !== null) {
     const block = match[1];
     const nameMatch = block.match(/\\textbf\{([^}]*)\}/);
-    const linkMatch = block.match(/\\href\{([^}]*)\}\{LINK\}/i);
-    const liveLinkMatch = block.match(/\\href\{([^}]*)\}\{Deployed LINK\}/i);
+    const linkMatch = block.match(/\\href\{([^}]*)\}\{(?:Repo )?LINK\}/i);
+    const liveLinkMatch = block.match(/\\href\{([^}]*)\}\{(?:Deployed|Live) LINK\}/i);
     const fallbackLink = extractHref(block);
     const link = linkMatch ? linkMatch[1] : (liveLinkMatch ? '' : fallbackLink);
     const liveLink = liveLinkMatch ? liveLinkMatch[1] : '';
@@ -204,7 +204,7 @@ function parseProjects(content) {
     if (nameMatch) {
       description = description.replace(nameMatch[1], '').trim();
     }
-    description = description.replace(/\|\s*LINK/gi, '').replace(/\|\s*Deployed LINK/gi, '').replace(/^[\s:|]+/, '').trim();
+    description = description.replace(/\|\s*(?:Repo )?LINK/gi, '').replace(/\|\s*(?:Deployed|Live) LINK/gi, '').replace(/^[\s:|-]+/, '').trim();
 
     items.push({
       name: nameMatch ? cleanLatex(nameMatch[1]) : '',

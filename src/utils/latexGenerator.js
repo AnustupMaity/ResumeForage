@@ -139,8 +139,8 @@ export function generateLatex(resume) {
       latex += `\\section*{Projects}\n\\hrule\n\\vspace{0.2cm}\n\\begin{itemize}[leftmargin=*]\n`;
       resume.projects.forEach(proj => {
         latex += `  \\item \\textbf{${proj.name || ''}}`;
-        if (proj.link) latex += ` $|$ \\href{${proj.link}}{LINK}`;
-        if (proj.liveLink) latex += ` $|$ \\href{${proj.liveLink}}{Deployed LINK}`;
+        if (proj.link) latex += ` $|$ \\href{${proj.link}}{Repo LINK}`;
+        if (proj.liveLink) latex += ` $|$ \\href{${proj.liveLink}}{Live LINK}`;
         if (proj.description) latex += ` - ${htmlToLatex(proj.description)}`;
         latex += `\n`;
       });
