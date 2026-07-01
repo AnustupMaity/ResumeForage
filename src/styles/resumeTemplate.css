@@ -225,3 +225,66 @@
   transform-origin: top center;
 }
 .resume-page p { margin: 0; display: inline; }
+
+/* --- Dynamic Spacing Overrides --- */
+.resume-page .resume-list > li {
+  margin-bottom: var(--item-gap, 3pt) !important;
+}
+
+/* --- Interactive Live Preview Reordering --- */
+.live-preview-section {
+  transition: outline 0.15s ease, background 0.15s ease;
+  border-radius: 4px;
+  padding: 2px;
+  margin: -2px;
+}
+.live-preview-section:hover {
+  outline: 1px dashed #3b82f6;
+  background: rgba(59, 130, 246, 0.02);
+}
+.live-section-controls {
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  background: #ffffff;
+  padding: 2px 6px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  z-index: 50;
+}
+.live-preview-section:hover .live-section-controls {
+  opacity: 1 !important;
+}
+.live-section-controls button {
+  border: none;
+  background: transparent;
+  padding: 2px 6px;
+  font-size: 11px;
+  color: #374151;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+.live-section-controls button:hover:not(:disabled) {
+  background: #f3f4f6;
+  color: #2563eb;
+}
+.live-section-controls button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.live-section-handle {
+  font-size: 11px;
+  color: #9ca3af;
+  cursor: grab;
+  padding: 0 2px;
+}
+.live-section-handle:active {
+  cursor: grabbing;
+}

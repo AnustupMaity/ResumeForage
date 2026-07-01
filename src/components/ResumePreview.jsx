@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { normalizeSkills } from '../utils/skillsUtils';
 import '../styles/resumeTemplate.css';
 
-export default function ResumePreview({ resume, themeId = 'latex' }) {
+export default function ResumePreview({ resume, themeId = 'latex', updateField }) {
   const wrapperRef = useRef(null);
   const [dynamicScale, setDynamicScale] = useState(1);
 
@@ -40,9 +40,13 @@ export default function ResumePreview({ resume, themeId = 'latex' }) {
   const sectionOrder = resume.settings?.sectionOrder || defaultOrder;
   const sectionFontSizes = resume.settings?.sectionFontSizes || {};
 
+  const sectionSpacing = resume.settings?.sectionSpacing !== undefined ? resume.settings.sectionSpacing : '12';
   const getSectionStyle = (key) => {
     const size = sectionFontSizes[key];
-    return size ? { fontSize: `${size}pt` } : {};
+    return {
+      ...(size && { fontSize: `${size}pt` }),
+      marginBottom: `${sectionSpacing}px`
+    };
   };
 
   const hasContent = (section) => {
@@ -113,6 +117,9 @@ export default function ResumePreview({ resume, themeId = 'latex' }) {
                   <strong>{proj.name}</strong>
                   {proj.link && (
                     <> | <a className="resume-link" href={proj.link} target="_blank" rel="noreferrer">LINK</a></>
+                  )}
+                  {proj.liveLink && (
+                    <> | <a className="resume-link" href={proj.liveLink} target="_blank" rel="noreferrer">Deployed LINK</a></>
                   )}
                   {proj.description && <span dangerouslySetInnerHTML={{ __html: proj.description }} />}
                 </li>
@@ -224,9 +231,83 @@ export default function ResumePreview({ resume, themeId = 'latex' }) {
     }
   };
 
+  const marginV = resume.settings?.marginV || resume.settings?.marginUniform || '0.5';
+  const marginH = resume.settings?.marginH || resume.settings?.marginUniform || '0.5';
+  const itemSpacing = resume.settings?.itemSpacing !== undefined ? resume.settings.itemSpacing : '4';
+
   const customStyle = {
     ...(resume.settings?.fontFamily && resume.settings.fontFamily !== 'inherit' && { '--theme-font': resume.settings.fontFamily }),
-    ...(resume.settings?.accentColor && { '--theme-accent': resume.settings.accentColor })
+    ...(resume.settings?.accentColor && { '--theme-accent': resume.settings.accentColor }),
+    paddingTop: `${marginV}in`,
+    paddingBottom: `${marginV}in`,
+    paddingLeft: `${marginH}in`,
+    paddingRight: `${marginH}in`,
+    '--item-gap': `${itemSpacing}px`
+  };
+
+  const renderInteractiveSection = (sectionKey, idx) => {
+    const content = renderSection(sectionKey);
+    if (!content) return null;
+    if (!updateField) return content;
+
+    const canMoveUp = idx > 0;
+    const canMoveDown = idx < sectionOrder.length - 1;
+
+    return (
+      <div
+        key={sectionKey}
+        className="live-preview-section"
+        draggable={true}
+        onDragStart={(e) => {
+          e.dataTransfer.setData('text/plain', idx);
+          e.dataTransfer.effectAllowed = 'move';
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          const fromIdx = parseInt(e.dataTransfer.getData('text/plain'), 10);
+          if (!isNaN(fromIdx) && fromIdx !== idx) {
+            const newOrder = [...sectionOrder];
+            const [moved] = newOrder.splice(fromIdx, 1);
+            newOrder.splice(idx, 0, moved);
+            updateField('settings.sectionOrder', newOrder);
+          }
+        }}
+        style={{ position: 'relative' }}
+      >
+        <div className="live-section-controls">
+          <button
+            type="button"
+            title="Move Section Up"
+            disabled={!canMoveUp}
+            onClick={() => {
+              const newOrder = [...sectionOrder];
+              [newOrder[idx - 1], newOrder[idx]] = [newOrder[idx], newOrder[idx - 1]];
+              updateField('settings.sectionOrder', newOrder);
+            }}
+          >
+            ▲
+          </button>
+          <span className="live-section-handle" title="Drag section to reorder">⋮⋮</span>
+          <button
+            type="button"
+            title="Move Section Down"
+            disabled={!canMoveDown}
+            onClick={() => {
+              const newOrder = [...sectionOrder];
+              [newOrder[idx], newOrder[idx + 1]] = [newOrder[idx + 1], newOrder[idx]];
+              updateField('settings.sectionOrder', newOrder);
+            }}
+          >
+            ▼
+          </button>
+        </div>
+        {content}
+      </div>
+    );
   };
 
   return (
@@ -283,7 +364,7 @@ export default function ResumePreview({ resume, themeId = 'latex' }) {
           )}
 
           {/* Render sections based on user's custom order */}
-          {sectionOrder.map(sectionKey => renderSection(sectionKey))}
+          {sectionOrder.map((sectionKey, idx) => renderInteractiveSection(sectionKey, idx))}
 
         </div>
       </div>

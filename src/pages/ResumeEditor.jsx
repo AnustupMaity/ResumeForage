@@ -346,7 +346,7 @@ export default function ResumeEditor() {
     { id: 'achievements', label: 'Achievements', icon: 'fa-trophy' },
     { id: 'certifications', label: 'Certifications', icon: 'fa-certificate' },
     { id: 'customSections', label: 'Custom Sections', icon: 'fa-plus-square' },
-    { id: 'reorder', label: 'Reorder / Theme', icon: 'fa-sort' },
+    { id: 'reorder', label: 'Layout & Formatting', icon: 'fa-sliders-h' },
     { id: 'aiAssistant', label: 'AI Assistant', icon: 'fa-magic' },
   ];
 
@@ -461,7 +461,7 @@ export default function ResumeEditor() {
 
       {/* Right panel - Preview */}
       <div className={`preview-panel ${showPreview ? '' : 'hide-mobile'}`}>
-        <ResumePreview resume={resume} themeId={resume.settings?.templateId || 'latex'} />
+        <ResumePreview resume={resume} themeId={resume.settings?.templateId || 'latex'} updateField={updateField} />
       </div>
 
       {showImport && (
@@ -679,14 +679,18 @@ function ProjectsForm({ resume, updateField, addToArray, removeFromArray }) {
             </button>
           </div>
           <div className="form-stack">
+            <div className="form-group">
+              <label className="form-label">Project Name</label>
+              <input className="form-input" value={proj.name || ''} onChange={e => updateField(`projects.${i}.name`, e.target.value)} placeholder="My Awesome Project" />
+            </div>
             <div className="form-grid">
-              <div className="form-group">
-                <label className="form-label">Project Name</label>
-                <input className="form-input" value={proj.name || ''} onChange={e => updateField(`projects.${i}.name`, e.target.value)} placeholder="My Awesome Project" />
-              </div>
               <div className="form-group">
                 <label className="form-label">Link (optional)</label>
                 <input className="form-input" value={proj.link || ''} onChange={e => updateField(`projects.${i}.link`, e.target.value)} placeholder="https://github.com/..." />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Live / Deployed Link (optional)</label>
+                <input className="form-input" value={proj.liveLink || ''} onChange={e => updateField(`projects.${i}.liveLink`, e.target.value)} placeholder="https://my-app.vercel.app" />
               </div>
             </div>
               <div className="form-group">
@@ -716,7 +720,7 @@ function ProjectsForm({ resume, updateField, addToArray, removeFromArray }) {
           </div>
         </div>
       ))}
-      <button className="btn btn-outline btn-sm" onClick={() => addToArray('projects', { name: '', link: '', description: '' })}>
+      <button className="btn btn-outline btn-sm" onClick={() => addToArray('projects', { name: '', link: '', liveLink: '', description: '' })}>
         <i className="fas fa-plus"></i> Add Project
       </button>
     </div>
@@ -959,8 +963,137 @@ function ReorderForm({ resume, updateField, swapArrayItems }) {
 
   return (
     <div className="form-section animate-fade-in">
-      <h4 className="form-section-title">Reorder Layout</h4>
-      <p className="form-section-desc">Change the order of main sections or items within them before downloading.</p>
+      <h4 className="form-section-title">Layout, Margins & Formatting</h4>
+      <p className="form-section-desc">Change margins, compress spacing, and reorder sections or items before downloading.</p>
+
+      {/* Margins & Spacing Sliders */}
+      <div className="entry-card glass-card">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+          <h5 style={{ margin: 0, color: 'var(--accent-primary-light)' }}><i className="fas fa-compress-arrows-alt"></i> Page Margins & Spacing</h5>
+          <div style={{ display: 'flex', background: 'var(--bg-primary)', borderRadius: '16px', padding: '2px', border: '1px solid var(--border-color)' }}>
+            <button 
+              type="button"
+              className={`btn btn-xs ${resume.settings?.marginType !== 'custom' ? 'btn-primary' : 'btn-ghost'}`}
+              style={{ padding: '4px 10px', fontSize: '0.75rem', borderRadius: '14px', border: 'none' }}
+              onClick={() => {
+                if (!resume.settings) updateField('settings', {});
+                updateField('settings.marginType', 'symmetric');
+              }}
+            >
+              Symmetric
+            </button>
+            <button 
+              type="button"
+              className={`btn btn-xs ${resume.settings?.marginType === 'custom' ? 'btn-primary' : 'btn-ghost'}`}
+              style={{ padding: '4px 10px', fontSize: '0.75rem', borderRadius: '14px', border: 'none' }}
+              onClick={() => {
+                if (!resume.settings) updateField('settings', {});
+                updateField('settings.marginType', 'custom');
+              }}
+            >
+              Custom
+            </button>
+          </div>
+        </div>
+        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
+          Compress gaps and adjust page margins so your resume fits perfectly onto 1 page!
+        </p>
+
+        <div className="form-stack">
+          {resume.settings?.marginType !== 'custom' ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ flex: 1, fontWeight: 500, fontSize: '0.85rem' }}>Uniform Page Margin</span>
+              <input
+                type="range"
+                min="0.25"
+                max="1.0"
+                step="0.05"
+                value={resume.settings?.marginUniform || '0.5'}
+                onChange={e => {
+                  const val = e.target.value;
+                  if (!resume.settings) updateField('settings', {});
+                  updateField('settings.marginUniform', val);
+                  updateField('settings.marginV', val);
+                  updateField('settings.marginH', val);
+                }}
+                style={{ width: '120px', cursor: 'pointer' }}
+              />
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', width: '45px', textAlign: 'right', fontWeight: 600 }}>{resume.settings?.marginUniform || '0.5'} in</span>
+            </div>
+          ) : (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ flex: 1, fontWeight: 500, fontSize: '0.85rem' }}>Vertical (Top / Bottom)</span>
+                <input
+                  type="range"
+                  min="0.25"
+                  max="1.0"
+                  step="0.05"
+                  value={resume.settings?.marginV || '0.5'}
+                  onChange={e => {
+                    if (!resume.settings) updateField('settings', {});
+                    updateField('settings.marginV', e.target.value);
+                  }}
+                  style={{ width: '120px', cursor: 'pointer' }}
+                />
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', width: '45px', textAlign: 'right', fontWeight: 600 }}>{resume.settings?.marginV || '0.5'} in</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ flex: 1, fontWeight: 500, fontSize: '0.85rem' }}>Horizontal (Left / Right)</span>
+                <input
+                  type="range"
+                  min="0.25"
+                  max="1.0"
+                  step="0.05"
+                  value={resume.settings?.marginH || '0.5'}
+                  onChange={e => {
+                    if (!resume.settings) updateField('settings', {});
+                    updateField('settings.marginH', e.target.value);
+                  }}
+                  style={{ width: '120px', cursor: 'pointer' }}
+                />
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', width: '45px', textAlign: 'right', fontWeight: 600 }}>{resume.settings?.marginH || '0.5'} in</span>
+              </div>
+            </>
+          )}
+
+          <hr style={{ borderColor: 'var(--border-color)', margin: '6px 0', opacity: 0.3 }} />
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ flex: 1, fontWeight: 500, fontSize: '0.85rem' }}>Section Spacing (Gaps between sections)</span>
+            <input
+              type="range"
+              min="0"
+              max="20"
+              step="2"
+              value={resume.settings?.sectionSpacing !== undefined ? resume.settings.sectionSpacing : '12'}
+              onChange={e => {
+                if (!resume.settings) updateField('settings', {});
+                updateField('settings.sectionSpacing', e.target.value);
+              }}
+              style={{ width: '120px', cursor: 'pointer' }}
+            />
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', width: '45px', textAlign: 'right', fontWeight: 600 }}>{resume.settings?.sectionSpacing !== undefined ? resume.settings.sectionSpacing : '12'} px</span>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ flex: 1, fontWeight: 500, fontSize: '0.85rem' }}>Item Spacing (Gaps within sections)</span>
+            <input
+              type="range"
+              min="0"
+              max="12"
+              step="1"
+              value={resume.settings?.itemSpacing !== undefined ? resume.settings.itemSpacing : '4'}
+              onChange={e => {
+                if (!resume.settings) updateField('settings', {});
+                updateField('settings.itemSpacing', e.target.value);
+              }}
+              style={{ width: '120px', cursor: 'pointer' }}
+            />
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', width: '45px', textAlign: 'right', fontWeight: 600 }}>{resume.settings?.itemSpacing !== undefined ? resume.settings.itemSpacing : '4'} px</span>
+          </div>
+        </div>
+      </div>
 
       {/* Section Reordering */}
       <div className="entry-card glass-card">

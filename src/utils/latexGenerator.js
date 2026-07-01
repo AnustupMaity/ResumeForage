@@ -56,11 +56,16 @@ export function generateLatex(resume) {
     return tex.trim();
   };
 
+  const marginV = resume.settings?.marginV || resume.settings?.marginUniform || '0.5';
+  const marginH = resume.settings?.marginH || resume.settings?.marginUniform || '0.5';
+  const itemSpacing = resume.settings?.itemSpacing !== undefined ? resume.settings.itemSpacing : '2';
+
   let latex = `\\documentclass[a4paper,10pt]{article}
-\\usepackage[left=0.5in, right=0.5in, top=0.5in, bottom=0.5in]{geometry}
+\\usepackage[left=${marginH}in, right=${marginH}in, top=${marginV}in, bottom=${marginV}in]{geometry}
 \\usepackage{hyperref}
 \\usepackage{xcolor}
 \\usepackage{enumitem}
+\\setlist{itemsep=${itemSpacing}pt, parsep=0pt, topsep=2pt}
 
 \\begin{document}
 \\pagestyle{empty}
@@ -118,6 +123,7 @@ export function generateLatex(resume) {
       resume.projects.forEach(proj => {
         latex += `  \\item \\textbf{${proj.name || ''}}`;
         if (proj.link) latex += ` $|$ \\href{${proj.link}}{LINK}`;
+        if (proj.liveLink) latex += ` $|$ \\href{${proj.liveLink}}{Deployed LINK}`;
         if (proj.description) latex += ` - ${htmlToLatex(proj.description)}`;
         latex += `\n`;
       });

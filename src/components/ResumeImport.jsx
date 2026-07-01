@@ -316,7 +316,7 @@ export default function ResumeImport({ onImport, onClose }) {
                   <h5><i className="fas fa-project-diagram"></i> Projects ({preview.projects.length})</h5>
                   <div className="preview-items">
                     {preview.projects.map((p, i) => (
-                      <div key={i} className="preview-item">{p.name}{p.link ? ' 🔗' : ''}</div>
+                      <div key={i} className="preview-item">{p.name}{(p.link || p.liveLink) ? ' 🔗' : ''}</div>
                     ))}
                   </div>
                 </div>
