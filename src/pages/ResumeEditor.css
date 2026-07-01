@@ -167,34 +167,8 @@
   background: var(--bg-secondary);
 }
 
-/* --- Mobile Preview Toggle --- */
-.preview-toggle {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 50;
-  box-shadow: var(--shadow-lg);
-}
-
 /* --- Responsive --- */
 @media (max-width: 600px) {
-  .editor-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .preview-toggle {
-    display: flex;
-  }
-
-  .hide-mobile {
-    display: none !important;
-  }
-
-  .preview-panel {
-    height: calc(100vh - 65px);
-  }
-
   .form-grid {
     grid-template-columns: 1fr;
   }

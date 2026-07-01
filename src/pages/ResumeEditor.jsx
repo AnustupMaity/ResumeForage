@@ -395,16 +395,10 @@ export default function ResumeEditor() {
 
   return (
     <>
-      {/* Mobile preview toggle */}
-      <button className="preview-toggle btn btn-primary btn-sm" onClick={() => setShowPreview(!showPreview)}>
-        <i className={`fas ${showPreview ? 'fa-edit' : 'fa-eye'}`}></i>
-        {showPreview ? 'Edit' : 'Preview'}
-      </button>
-
       <div className="editor-layout">
         {/* Left panel - Form */}
-      <div className={`editor-panel ${showPreview ? 'hide-mobile' : ''}`}>
-        <div className="editor-toolbar">
+        <div className="editor-panel">
+          <div className="editor-toolbar">
           <h3 className="dot-font"><i className="fas fa-edit"></i> Resume Editor</h3>
           <div className="toolbar-actions">
             <button className="btn btn-icon btn-secondary" onClick={undo} disabled={historyIndex <= 0} title="Undo (Ctrl+Z)">
@@ -504,7 +498,7 @@ export default function ResumeEditor() {
       </div>
 
         {/* Right panel - Preview */}
-        <div className={`preview-panel ${showPreview ? '' : 'hide-mobile'}`}>
+        <div className="preview-panel">
           <ResumePreview resume={resume} themeId={resume.settings?.templateId || 'latex'} updateField={updateField} />
         </div>
       </div>
