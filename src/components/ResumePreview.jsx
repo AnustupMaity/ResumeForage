@@ -5,7 +5,10 @@ import '../styles/resumeTemplate.css';
 function cleanInlineHtml(html) {
   if (!html) return '';
   let cleaned = String(html).trim();
-  cleaned = cleaned.replace(/<\/?(p|div)[^>]*>/gi, ' ').replace(/(<br\s*\/?>\s*)+/gi, ' ').replace(/\s+/g, ' ').trim();
+  // Strip ALL block-level HTML tags so text renders purely inline
+  cleaned = cleaned.replace(/<\/?(p|div|br|ul|ol|li|h[1-6]|blockquote|pre|table|tr|td|th|thead|tbody|tfoot|section|article|aside|header|footer|nav|figure|figcaption|details|summary|hr)[^>]*>/gi, ' ');
+  // Collapse whitespace and trim
+  cleaned = cleaned.replace(/\s+/g, ' ').trim();
   return cleaned;
 }
 
