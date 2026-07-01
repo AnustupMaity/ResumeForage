@@ -12,10 +12,17 @@ function cleanInlineHtml(html) {
   return cleaned;
 }
 
-// Strips ALL HTML tags and returns pure plain text
+// Strips ALL HTML tags and decodes HTML entities, returns pure plain text
 function stripAllHtml(html) {
   if (!html) return '';
-  return String(html).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  // Strip all HTML tags
+  let text = String(html).replace(/<[^>]*>/g, ' ');
+  // Decode HTML entities (&nbsp; &amp; &lt; etc.) using a temp element
+  const tmp = document.createElement('span');
+  tmp.innerHTML = text;
+  text = tmp.textContent || tmp.innerText || '';
+  // Collapse whitespace and trim
+  return text.replace(/\s+/g, ' ').trim();
 }
 
 export default function ResumePreview({ resume, themeId = 'latex', updateField }) {
