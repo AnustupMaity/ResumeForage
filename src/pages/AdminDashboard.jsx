@@ -152,6 +152,7 @@ export default function AdminDashboard() {
           <div style={{ display: 'flex', gap: '12px' }}>
             <Link to="/admin/users" className="btn btn-secondary"><i className="fas fa-users"></i> Manage Users</Link>
             <Link to="/admin/payments" className="btn btn-secondary"><i className="fas fa-rupee-sign"></i> Manage Payments</Link>
+            <Link to="/admin/coupons" className="btn btn-secondary"><i className="fas fa-ticket-alt"></i> Manage Coupons</Link>
             <Link to="/admin/support" className="btn btn-secondary"><i className="fas fa-headset"></i> Support Tickets</Link>
           </div>
         </div>

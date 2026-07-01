@@ -75,6 +75,7 @@ export default function Navbar() {
                 <li><Link to="/admin"><i className="fas fa-chart-pie"></i> <span className="nav-text">Dashboard</span></Link></li>
                 <li><Link to="/admin/users"><i className="fas fa-users"></i> <span className="nav-text">Users</span></Link></li>
                 <li><Link to="/admin/payments"><i className="fas fa-rupee-sign"></i> <span className="nav-text">Payments</span></Link></li>
+                <li><Link to="/admin/coupons"><i className="fas fa-ticket-alt"></i> <span className="nav-text">Coupons</span></Link></li>
                 <li>
                   <Link to="/admin/support" style={{ position: 'relative' }}>
                     <i className="fas fa-shield-alt"></i> <span className="nav-text">Support Tickets</span>

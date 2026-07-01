@@ -12,6 +12,7 @@ import AdminPayments from './pages/AdminPayments';
 import SupportPage from './pages/SupportPage';
 import AdminSupportPage from './pages/AdminSupportPage';
 import AdminUsersPage from './pages/AdminUsersPage';
+import AdminCouponsPage from './pages/AdminCouponsPage';
 import MyResumesPage from './pages/MyResumesPage';
 
 function ProtectedRoute({ children }) {
@@ -89,6 +90,9 @@ function AppContent() {
         } />
         <Route path="/admin/users" element={
           <ProtectedRoute><AdminUsersPage /></ProtectedRoute>
+        } />
+        <Route path="/admin/coupons" element={
+          <ProtectedRoute><AdminCouponsPage /></ProtectedRoute>
         } />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
