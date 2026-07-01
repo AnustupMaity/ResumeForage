@@ -95,6 +95,9 @@ export default function ResumeEditor() {
   const [activeSection, setActiveSection] = useState('personalInfo');
   const [showPreview, setShowPreview] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [importInitialMode, setImportInitialMode] = useState(null);
+  const [importTargetSection, setImportTargetSection] = useState('all');
+  const [cachedLinkedInData, setCachedLinkedInData] = useState(null);
   const [showAtsChecker, setShowAtsChecker] = useState(false);
   const [showCoverLetter, setShowCoverLetter] = useState(false);
   const [leftWidth, setLeftWidth] = useState(42); // 42% form, 58% preview (default split up to red line)
@@ -191,18 +194,35 @@ export default function ResumeEditor() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [undo, redo]);
 
-  const handleImport = useCallback((importedData) => {
+  const handleImport = useCallback((importedData, targetSection = 'all', mergeMode = 'replace') => {
     setResume(prev => {
       pushToHistory(prev);
       const merged = { ...prev };
-      if (importedData.personalInfo) merged.personalInfo = { ...merged.personalInfo, ...importedData.personalInfo };
-      if (importedData.education?.length) merged.education = importedData.education;
-      if (importedData.skills) merged.skills = { ...merged.skills, ...importedData.skills };
-      if (importedData.projects?.length) merged.projects = importedData.projects;
-      if (importedData.experience?.length) merged.experience = importedData.experience;
-      if (importedData.achievements?.length) merged.achievements = importedData.achievements;
-      if (importedData.certifications?.length) merged.certifications = importedData.certifications;
-      if (importedData.customSections?.length) merged.customSections = importedData.customSections;
+      const sec = targetSection || 'all';
+      if ((sec === 'all' || sec === 'personalInfo') && importedData.personalInfo) {
+        merged.personalInfo = { ...(merged.personalInfo || {}), ...importedData.personalInfo };
+      }
+      if ((sec === 'all' || sec === 'education') && importedData.education?.length) {
+        merged.education = mergeMode === 'append' ? [...(merged.education || []), ...importedData.education] : importedData.education;
+      }
+      if ((sec === 'all' || sec === 'skills') && importedData.skills) {
+        merged.skills = { ...(merged.skills || {}), ...importedData.skills };
+      }
+      if ((sec === 'all' || sec === 'projects') && importedData.projects?.length) {
+        merged.projects = mergeMode === 'append' ? [...(merged.projects || []), ...importedData.projects] : importedData.projects;
+      }
+      if ((sec === 'all' || sec === 'experience') && importedData.experience?.length) {
+        merged.experience = mergeMode === 'append' ? [...(merged.experience || []), ...importedData.experience] : importedData.experience;
+      }
+      if ((sec === 'all' || sec === 'achievements') && importedData.achievements?.length) {
+        merged.achievements = mergeMode === 'append' ? [...(merged.achievements || []), ...importedData.achievements] : importedData.achievements;
+      }
+      if ((sec === 'all' || sec === 'certifications') && importedData.certifications?.length) {
+        merged.certifications = mergeMode === 'append' ? [...(merged.certifications || []), ...importedData.certifications] : importedData.certifications;
+      }
+      if ((sec === 'all' || sec === 'customSections') && importedData.customSections?.length) {
+        merged.customSections = mergeMode === 'append' ? [...(merged.customSections || []), ...importedData.customSections] : importedData.customSections;
+      }
       return merged;
     });
     setShowImport(false);
@@ -443,7 +463,7 @@ export default function ResumeEditor() {
             </button>
             <div style={{ width: '1px', height: '24px', background: 'var(--border-subtle)', margin: '0 4px' }}></div>
             
-            <button className="btn btn-sm btn-outline" onClick={() => setShowImport(true)}>
+            <button className="btn btn-sm btn-outline" onClick={() => { setImportInitialMode(null); setImportTargetSection('all'); setShowImport(true); }}>
               <i className="fas fa-file-import"></i> <span className="hide-mobile">Import</span>
             </button>
             <button className="btn btn-sm btn-outline" onClick={() => setShowAtsChecker(true)} title="Check ATS Score">
@@ -498,6 +518,26 @@ export default function ResumeEditor() {
 
         {/* Section forms */}
         <div className="editor-form">
+          {['personalInfo', 'education', 'skills', 'projects', 'experience', 'certifications'].includes(activeSection) && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(10, 102, 194, 0.08)', border: '1px solid rgba(10, 102, 194, 0.25)', borderRadius: '8px', padding: '10px 14px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#0a66c2', fontSize: '0.85rem' }}>
+                <i className="fab fa-linkedin" style={{ fontSize: '1.2rem' }}></i>
+                <span>Want to fill this section automatically from LinkedIn?</span>
+              </div>
+              <button 
+                type="button"
+                className="btn btn-sm" 
+                style={{ background: '#0a66c2', color: '#fff', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px', border: 'none', cursor: 'pointer', padding: '6px 12px', borderRadius: '6px' }}
+                onClick={() => {
+                  setImportInitialMode('linkedin');
+                  setImportTargetSection(activeSection);
+                  setShowImport(true);
+                }}
+              >
+                <i className="fab fa-linkedin"></i> Fetch {sections.find(s => s.id === activeSection)?.label || 'Section'}
+              </button>
+            </div>
+          )}
           {activeSection === 'personalInfo' && (
             <PersonalInfoForm resume={resume} updateField={updateField} addToArray={addToArray} removeFromArray={removeFromArray} />
           )}
@@ -548,6 +588,10 @@ export default function ResumeEditor() {
         <ResumeImport 
           onImport={handleImport}
           onClose={() => setShowImport(false)}
+          initialMode={importInitialMode}
+          targetSection={importTargetSection}
+          cachedLinkedInData={cachedLinkedInData}
+          onCacheLinkedInData={(data) => setCachedLinkedInData(data)}
         />
       )}
       
