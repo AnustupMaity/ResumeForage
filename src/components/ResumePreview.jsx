@@ -27,21 +27,25 @@ function stripAllHtml(html) {
 
 export default function ResumePreview({ resume, themeId = 'latex', updateField }) {
   const wrapperRef = useRef(null);
+  const contentRef = useRef(null);
   const [dynamicScale, setDynamicScale] = useState(1);
+  const [contentHeight, setContentHeight] = useState(1056);
 
   useEffect(() => {
     if (!wrapperRef.current) return;
     const observer = new ResizeObserver((entries) => {
       for (let entry of entries) {
-        // Page width is 8.5in = 816px (assuming 96dpi). Add some padding logic.
-        const containerWidth = entry.contentRect.width;
-        // Target scale is container width divided by 816, max 1.2, min 0.3.
-        // We subtract a little padding (e.g. 40px) to ensure it's not flush with edges.
-        const calculatedScale = Math.min(1.2, Math.max(0.3, (containerWidth - 40) / 816));
-        setDynamicScale(calculatedScale);
+        if (entry.target === wrapperRef.current) {
+          const containerWidth = entry.contentRect.width;
+          const calculatedScale = Math.min(1.2, Math.max(0.3, (containerWidth - 40) / 816));
+          setDynamicScale(calculatedScale);
+        } else if (entry.target === contentRef.current) {
+          setContentHeight(Math.max(1056, entry.contentRect.height));
+        }
       }
     });
     observer.observe(wrapperRef.current);
+    if (contentRef.current) observer.observe(contentRef.current);
     return () => observer.disconnect();
   }, []);
 
@@ -62,13 +66,34 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
 
   const sectionOrder = resume.settings?.sectionOrder || defaultOrder;
   const sectionFontSizes = resume.settings?.sectionFontSizes || {};
+  const sectionFontFamilies = resume.settings?.sectionFontFamilies || {};
+  const sectionStyles = resume.settings?.sectionStyles || {};
+  const sectionColors = resume.settings?.sectionColors || {};
 
   const sectionSpacing = resume.settings?.sectionSpacing !== undefined ? resume.settings.sectionSpacing : '12';
+  
   const getSectionStyle = (key) => {
     const size = sectionFontSizes[key];
+    const family = sectionFontFamilies[key];
+    const styles = sectionStyles[key] || {};
+    const color = sectionColors[key];
     return {
       ...(size && { fontSize: `${size}pt` }),
+      ...(family && { fontFamily: family }),
+      ...(styles.bold && { fontWeight: 'bold' }),
+      ...(styles.italic && { fontStyle: 'italic' }),
+      ...(styles.underline && { textDecoration: 'underline' }),
+      ...(color && { color: color }),
       marginBottom: `${sectionSpacing}px`
+    };
+  };
+
+  const getSectionTitleStyle = (key) => {
+    const color = sectionColors[key];
+    const family = sectionFontFamilies[key];
+    return {
+      ...(color && { color: color, borderColor: color }),
+      ...(family && { fontFamily: family })
     };
   };
 
@@ -94,7 +119,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
         if (!hasContent(education)) return null;
         return (
           <div key="education" style={getSectionStyle('education')}>
-            <div className="resume-section-title">Education</div>
+            <div className="resume-section-title" style={getSectionTitleStyle('education')}>Education</div>
             <ul className="resume-list">
               {education.map((edu, i) => (
                 <li key={i}>
@@ -117,7 +142,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
         if (skillsList.length === 0) return null;
         return (
           <div key="skills" style={getSectionStyle('skills')}>
-            <div className="resume-section-title">Skills Summary</div>
+            <div className="resume-section-title" style={getSectionTitleStyle('skills')}>Skills Summary</div>
             <ul className="resume-list">
               {skillsList.map((item, idx) => (
                 <li key={item.id || idx}>
@@ -133,7 +158,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
         if (!hasContent(projects)) return null;
         return (
           <div key="projects" style={getSectionStyle('projects')}>
-            <div className="resume-section-title">Projects</div>
+            <div className="resume-section-title" style={getSectionTitleStyle('projects')}>Projects</div>
             <ul className="resume-list">
               {projects.map((proj, i) => (
                 <li key={i} style={{ marginBottom: '6px' }}>
@@ -165,7 +190,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
         if (!hasContent(experience)) return null;
         return (
           <div key="experience" style={getSectionStyle('experience')}>
-            <div className="resume-section-title">Experience</div>
+            <div className="resume-section-title" style={getSectionTitleStyle('experience')}>Experience</div>
             <ul className="resume-list">
               {experience.map((exp, i) => (
                 <li key={i}>
@@ -191,7 +216,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
         if (!hasContent(achievements)) return null;
         return (
           <div key="achievements" style={getSectionStyle('achievements')}>
-            <div className="resume-section-title">Achievements</div>
+            <div className="resume-section-title" style={getSectionTitleStyle('achievements')}>Achievements</div>
             <div className="resume-two-col">
               <ul className="resume-list">
                 {achievements.filter((_, i) => i % 2 === 0).map((ach, i) => (
@@ -225,7 +250,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
         if (!hasContent(certifications)) return null;
         return (
           <div key="certifications" style={getSectionStyle('certifications')}>
-            <div className="resume-section-title">Certifications</div>
+            <div className="resume-section-title" style={getSectionTitleStyle('certifications')}>Certifications</div>
             <ul className="resume-list">
               {certifications.map((cert, i) => (
                 <li key={i}>
@@ -247,7 +272,7 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
             {customSections.map((section, idx) => (
               section.title && section.items && section.items.length > 0 && (
                 <div key={idx}>
-                  <div className="resume-section-title">{section.title}</div>
+                  <div className="resume-section-title" style={getSectionTitleStyle('customSections')}>{section.title}</div>
                   <ul className="resume-list">
                     {section.items.map((item, i) => (
                       <li key={i} dangerouslySetInnerHTML={{ __html: cleanInlineHtml(item) }}></li>
@@ -345,96 +370,105 @@ export default function ResumePreview({ resume, themeId = 'latex', updateField }
 
   return (
     <div className="resume-preview-wrapper" ref={wrapperRef}>
-      <div className="resume-preview-scaler" style={{ transform: `scale(${dynamicScale})`, height: `${11 * 96 * dynamicScale}px` }}>
+      <div className="resume-preview-scaler" style={{ transform: `scale(${dynamicScale})`, height: `${contentHeight * dynamicScale}px` }}>
         {/* The theme class is applied to the root page element */}
-        <div className={`resume-page theme-${themeId}`} id="resume-content" style={customStyle}>
+        <div className={`resume-page theme-${themeId}`} id="resume-content" ref={contentRef} style={customStyle}>
+          {resume.settings?.pageMode !== 'continuous' && (
+            <>
+              {contentHeight > 1000 && <div className="page-break-indicator no-print" style={{ top: '1056px' }}><span>A4 Page Break (Page 2)</span></div>}
+              {contentHeight > 2000 && <div className="page-break-indicator no-print" style={{ top: '2112px' }}><span>A4 Page Break (Page 3)</span></div>}
+              {contentHeight > 3000 && <div className="page-break-indicator no-print" style={{ top: '3168px' }}><span>A4 Page Break (Page 4)</span></div>}
+            </>
+          )}
           
           {/* Header & Contact are always at the top */}
-          {personalInfo?.name && (
-            <div className="resume-name">{personalInfo.name}</div>
-          )}
+          <div key="personalInfo" style={getSectionStyle('personalInfo')}>
+            {personalInfo?.name && (
+              <div className="resume-name" style={getSectionTitleStyle('personalInfo')}>{personalInfo.name}</div>
+            )}
 
-          {(() => {
-            const items = [];
-            if (personalInfo?.email) {
-              items.push({
-                icon: 'fas fa-envelope',
-                content: <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a>
-              });
-            }
-            if (personalInfo?.phone) {
-              items.push({
-                icon: 'fas fa-phone',
-                content: <a href={`tel:${personalInfo.phone}`}>{personalInfo.phone}</a>
-              });
-            }
-            if (personalInfo?.linkedin) {
-              const url = personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://linkedin.com/in/${personalInfo.linkedin}`;
-              const text = personalInfo.linkedin.replace(/https?:\/\/(www\.)?linkedin\.com\/in\//i, '').replace(/\/$/, '');
-              items.push({
-                icon: 'fab fa-linkedin',
-                content: <a href={url} target="_blank" rel="noreferrer">{text}</a>
-              });
-            }
-            if (personalInfo?.github) {
-              const url = personalInfo.github.startsWith('http') ? personalInfo.github : `https://github.com/${personalInfo.github}`;
-              const text = personalInfo.github.replace(/https?:\/\/(www\.)?github\.com\//i, '').replace(/\/$/, '');
-              items.push({
-                icon: 'fab fa-github',
-                content: <a href={url} target="_blank" rel="noreferrer">{text}</a>
-              });
-            }
-            if (Array.isArray(personalInfo?.customLinks)) {
-              personalInfo.customLinks.forEach(link => {
-                if (!link || (!link.value && !link.label)) return;
-                const val = (link.value || '').trim();
-                const lbl = (link.label || '').trim();
-                if (!val && !lbl) return;
-                
-                let iconClass = 'fas fa-link';
-                const lower = (lbl + ' ' + val).toLowerCase();
-                if (lower.includes('portfolio') || lower.includes('website') || lower.includes('site') || lower.includes('.dev') || lower.includes('.com') || lower.includes('.io') || lower.includes('.org') || lower.includes('.net')) iconClass = 'fas fa-globe';
-                else if (lower.includes('twitter') || lower.includes('x.com')) iconClass = 'fab fa-twitter';
-                else if (lower.includes('leetcode')) iconClass = 'fas fa-code';
-                else if (lower.includes('hackerrank')) iconClass = 'fab fa-hackerrank';
-                else if (lower.includes('medium') || lower.includes('blog')) iconClass = 'fab fa-medium';
-                else if (lower.includes('location') || lower.includes('address') || lower.includes('city') || lower.includes('state') || lower.includes('country') || lower.includes('india') || lower.includes('usa')) iconClass = 'fas fa-map-marker-alt';
-
-                let content;
-                if (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('www.') || val.includes('.') || iconClass === 'fas fa-globe' || iconClass === 'fas fa-link' || iconClass === 'fab fa-twitter' || iconClass === 'fab fa-medium' || iconClass === 'fab fa-hackerrank') {
-                  const rawUrl = val || lbl;
-                  const href = rawUrl.startsWith('http://') || rawUrl.startsWith('https://') ? rawUrl : `https://${rawUrl.replace(/^www\./, '')}`;
-                  const display = lbl || val.replace(/https?:\/\/(www\.)?/i, '').replace(/\/$/, '');
-                  content = <a href={href} target="_blank" rel="noreferrer">{display}</a>;
-                } else if (val && lbl) {
-                  content = <span><strong>{lbl}:</strong> {val}</span>;
-                } else {
-                  content = <span>{val || lbl}</span>;
-                }
-
+            {(() => {
+              const items = [];
+              if (personalInfo?.email) {
                 items.push({
-                  icon: link.icon || iconClass,
-                  content
+                  icon: 'fas fa-envelope',
+                  content: <a href={`mailto:${personalInfo.email}`}>{personalInfo.email}</a>
                 });
-              });
-            }
+              }
+              if (personalInfo?.phone) {
+                items.push({
+                  icon: 'fas fa-phone',
+                  content: <a href={`tel:${personalInfo.phone}`}>{personalInfo.phone}</a>
+                });
+              }
+              if (personalInfo?.linkedin) {
+                const url = personalInfo.linkedin.startsWith('http') ? personalInfo.linkedin : `https://linkedin.com/in/${personalInfo.linkedin}`;
+                const text = personalInfo.linkedin.replace(/https?:\/\/(www\.)?linkedin\.com\/in\//i, '').replace(/\/$/, '');
+                items.push({
+                  icon: 'fab fa-linkedin',
+                  content: <a href={url} target="_blank" rel="noreferrer">{text}</a>
+                });
+              }
+              if (personalInfo?.github) {
+                const url = personalInfo.github.startsWith('http') ? personalInfo.github : `https://github.com/${personalInfo.github}`;
+                const text = personalInfo.github.replace(/https?:\/\/(www\.)?github\.com\//i, '').replace(/\/$/, '');
+                items.push({
+                  icon: 'fab fa-github',
+                  content: <a href={url} target="_blank" rel="noreferrer">{text}</a>
+                });
+              }
+              if (Array.isArray(personalInfo?.customLinks)) {
+                personalInfo.customLinks.forEach(link => {
+                  if (!link || (!link.value && !link.label)) return;
+                  const val = (link.value || '').trim();
+                  const lbl = (link.label || '').trim();
+                  if (!val && !lbl) return;
+                  
+                  let iconClass = 'fas fa-link';
+                  const lower = (lbl + ' ' + val).toLowerCase();
+                  if (lower.includes('portfolio') || lower.includes('website') || lower.includes('site') || lower.includes('.dev') || lower.includes('.com') || lower.includes('.io') || lower.includes('.org') || lower.includes('.net')) iconClass = 'fas fa-globe';
+                  else if (lower.includes('twitter') || lower.includes('x.com')) iconClass = 'fab fa-twitter';
+                  else if (lower.includes('leetcode')) iconClass = 'fas fa-code';
+                  else if (lower.includes('hackerrank')) iconClass = 'fab fa-hackerrank';
+                  else if (lower.includes('medium') || lower.includes('blog')) iconClass = 'fab fa-medium';
+                  else if (lower.includes('location') || lower.includes('address') || lower.includes('city') || lower.includes('state') || lower.includes('country') || lower.includes('india') || lower.includes('usa')) iconClass = 'fas fa-map-marker-alt';
 
-            if (items.length === 0) return null;
+                  let content;
+                  if (val.startsWith('http://') || val.startsWith('https://') || val.startsWith('www.') || val.includes('.') || iconClass === 'fas fa-globe' || iconClass === 'fas fa-link' || iconClass === 'fab fa-twitter' || iconClass === 'fab fa-medium' || iconClass === 'fab fa-hackerrank') {
+                    const rawUrl = val || lbl;
+                    const href = rawUrl.startsWith('http://') || rawUrl.startsWith('https://') ? rawUrl : `https://${rawUrl.replace(/^www\./, '')}`;
+                    const display = lbl || val.replace(/https?:\/\/(www\.)?/i, '').replace(/\/$/, '');
+                    content = <a href={href} target="_blank" rel="noreferrer">{display}</a>;
+                  } else if (val && lbl) {
+                    content = <span><strong>{lbl}:</strong> {val}</span>;
+                  } else {
+                    content = <span>{val || lbl}</span>;
+                  }
 
-            return (
-              <div className="resume-contact">
-                {items.map((item, index) => (
-                  <span key={index} style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    {index > 0 && <span className="contact-sep" style={{ margin: '0 6px' }}>|</span>}
-                    <span className="contact-item">
-                      {item.icon && <i className={item.icon} style={{ marginRight: '4px' }}></i>}
-                      {item.content}
+                  items.push({
+                    icon: link.icon || iconClass,
+                    content
+                  });
+                });
+              }
+
+              if (items.length === 0) return null;
+
+              return (
+                <div className="resume-contact">
+                  {items.map((item, index) => (
+                    <span key={index} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                      {index > 0 && <span className="contact-sep" style={{ margin: '0 6px' }}>|</span>}
+                      <span className="contact-item">
+                        {item.icon && <i className={item.icon} style={{ marginRight: '4px' }}></i>}
+                        {item.content}
+                      </span>
                     </span>
-                  </span>
-                ))}
-              </div>
-            );
-          })()}
+                  ))}
+                </div>
+              );
+            })()}
+          </div>
 
           {/* Render sections based on user's custom order */}
           {sectionOrder.map((sectionKey, idx) => renderInteractiveSection(sectionKey, idx))}

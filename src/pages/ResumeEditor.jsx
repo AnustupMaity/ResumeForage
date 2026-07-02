@@ -390,14 +390,40 @@ export default function ResumeEditor() {
     if (!finalName.toLowerCase().endsWith('.pdf')) finalName += '.pdf';
 
     const html2pdf = (await import('html2pdf.js')).default;
+    
+    // Temporarily adjust styles for pixel-perfect PDF rendering without shadow/clipping
+    const originalShadow = element.style.boxShadow;
+    const originalOverflow = element.style.overflow;
+    element.style.boxShadow = 'none';
+    element.style.overflow = 'visible';
+
+    const isContinuous = resume.settings?.pageMode === 'continuous';
+    const contentHeightInches = element.scrollHeight / 96;
+    const pdfFormat = isContinuous ? [8.5, Math.max(11, contentHeightInches)] : 'letter';
+
     const opt = {
       margin: 0,
       filename: finalName,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      image: { type: 'jpeg', quality: 1.0 },
+      html2canvas: { 
+        scale: 3, 
+        useCORS: true, 
+        letterRendering: true,
+        scrollY: 0,
+        scrollX: 0,
+        windowWidth: 816, // Exact 8.5in width at 96 DPI
+        backgroundColor: '#ffffff'
+      },
+      jsPDF: { unit: 'in', format: pdfFormat, orientation: 'portrait' },
+      pagebreak: isContinuous ? { mode: [] } : { mode: ['avoid-all', 'css', 'legacy'] }
     };
-    html2pdf().set(opt).from(element).save();
+
+    try {
+      await html2pdf().set(opt).from(element).save();
+    } finally {
+      element.style.boxShadow = originalShadow;
+      element.style.overflow = originalOverflow;
+    }
   }
 
   function handleDownloadLatex() {
@@ -483,6 +509,7 @@ export default function ResumeEditor() {
               }}
             >
               <option value="latex">Classic (LaTeX)</option>
+              <option value="professional">Professional (Exact LaTeX)</option>
               <option value="modern">Modern</option>
               <option value="minimalist">Minimalist</option>
             </select>
@@ -519,15 +546,15 @@ export default function ResumeEditor() {
         {/* Section forms */}
         <div className="editor-form">
           {['personalInfo', 'education', 'skills', 'projects', 'experience', 'certifications'].includes(activeSection) && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(10, 102, 194, 0.08)', border: '1px solid rgba(10, 102, 194, 0.25)', borderRadius: '8px', padding: '10px 14px', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#0a66c2', fontSize: '0.85rem' }}>
-                <i className="fab fa-linkedin" style={{ fontSize: '1.2rem' }}></i>
+            <div className="glass-card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', marginBottom: '16px', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', background: 'rgba(255, 255, 255, 0.03)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)', fontSize: '0.85rem', fontFamily: 'var(--font-sans)' }}>
+                <i className="fab fa-linkedin" style={{ fontSize: '1.2rem', color: '#0a66c2' }}></i>
                 <span>Want to fill this section automatically from LinkedIn?</span>
               </div>
               <button 
                 type="button"
-                className="btn btn-sm" 
-                style={{ background: '#0a66c2', color: '#fff', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px', border: 'none', cursor: 'pointer', padding: '6px 12px', borderRadius: '6px' }}
+                className="btn btn-sm btn-primary" 
+                style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', padding: '6px 12px', borderRadius: 'var(--radius-sm)' }}
                 onClick={() => {
                   setImportInitialMode('linkedin');
                   setImportTargetSection(activeSection);
@@ -1140,6 +1167,42 @@ function ReorderForm({ resume, updateField, swapArrayItems }) {
       <h4 className="form-section-title">Layout, Margins & Formatting</h4>
       <p className="form-section-desc">Change margins, compress spacing, and reorder sections or items before downloading.</p>
 
+      {/* Paper Size / Page Layout Mode */}
+      <div className="entry-card glass-card" style={{ marginBottom: '16px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+          <h5 style={{ margin: 0, color: 'var(--accent-primary-light)' }}><i className="fas fa-file-alt"></i> Paper Size & Page Mode</h5>
+          <div style={{ display: 'flex', background: 'var(--bg-primary)', borderRadius: '16px', padding: '2px', border: '1px solid var(--border-color)' }}>
+            <button 
+              type="button"
+              className={`btn btn-xs ${resume.settings?.pageMode !== 'continuous' ? 'btn-primary' : 'btn-ghost'}`}
+              style={{ padding: '4px 10px', fontSize: '0.75rem', borderRadius: '14px', border: 'none' }}
+              onClick={() => {
+                if (!resume.settings) updateField('settings', {});
+                updateField('settings.pageMode', 'a4');
+              }}
+            >
+              Standard A4 / Letter
+            </button>
+            <button 
+              type="button"
+              className={`btn btn-xs ${resume.settings?.pageMode === 'continuous' ? 'btn-primary' : 'btn-ghost'}`}
+              style={{ padding: '4px 10px', fontSize: '0.75rem', borderRadius: '14px', border: 'none' }}
+              onClick={() => {
+                if (!resume.settings) updateField('settings', {});
+                updateField('settings.pageMode', 'continuous');
+              }}
+            >
+              Single Long Page
+            </button>
+          </div>
+        </div>
+        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: 0 }}>
+          {resume.settings?.pageMode === 'continuous'
+            ? "Continuous Mode: Downloads as ONE single full-length custom page without any page cuts or height limits!"
+            : "Standard Mode: Shows exact A4 page boundaries and visual break indicators in preview. Prevents awkward text splitting across pages."}
+        </p>
+      </div>
+
       {/* Margins & Spacing Sliders */}
       <div className="entry-card glass-card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
@@ -1327,44 +1390,144 @@ function ReorderForm({ resume, updateField, swapArrayItems }) {
         </div>
       </div>
 
-      {/* Per-Section Font Sizes */}
+      {/* Per-Section Typography & Styling */}
       <div className="entry-card glass-card">
-        <h5 style={{ marginBottom: '12px', color: 'var(--accent-primary-light)' }}><i className="fas fa-text-height"></i> Section Font Sizes</h5>
-        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px' }}>Adjust the font size for each section individually (8pt – 14pt). Default is theme standard.</p>
+        <h5 style={{ marginBottom: '12px', color: 'var(--accent-primary-light)' }}><i className="fas fa-font"></i> Section Typography & Styling</h5>
+        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '16px' }}>Customize font size (8pt–14pt), font face, bold/italic/underline, and text color for each section individually.</p>
         <div className="form-stack">
-          {Object.entries(sectionLabels).map(([key, label]) => {
+          {Object.entries({ personalInfo: 'Personal Info / Header', ...sectionLabels }).map(([key, label]) => {
             const currentSize = resume.settings?.sectionFontSizes?.[key] || '';
+            const currentFamily = resume.settings?.sectionFontFamilies?.[key] || '';
+            const currentStyles = resume.settings?.sectionStyles?.[key] || {};
+            const currentColor = resume.settings?.sectionColors?.[key] || '';
+
             return (
-              <div key={key} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{ flex: 1, fontWeight: 500, fontSize: '0.85rem' }}>{label}</span>
-                <input
-                  type="range"
-                  min="8"
-                  max="14"
-                  step="0.5"
-                  value={currentSize || '10'}
-                  onChange={e => {
-                    if (!resume.settings) updateField('settings', {});
-                    if (!resume.settings?.sectionFontSizes) updateField('settings.sectionFontSizes', {});
-                    updateField(`settings.sectionFontSizes.${key}`, e.target.value);
-                  }}
-                  style={{ width: '100px', cursor: 'pointer' }}
-                />
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', width: '35px', textAlign: 'right' }}>{currentSize || '10'}pt</span>
-                {currentSize && (
-                  <button 
-                    className="btn btn-icon btn-secondary" 
-                    title="Reset to default"
-                    onClick={() => {
-                      const sizes = { ...(resume.settings?.sectionFontSizes || {}) };
-                      delete sizes[key];
-                      updateField('settings.sectionFontSizes', sizes);
-                    }}
-                    style={{ padding: '2px 6px', fontSize: '0.65rem' }}
-                  >
-                    <i className="fas fa-undo"></i>
-                  </button>
-                )}
+              <div key={key} style={{ padding: '12px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-subtle)', borderRadius: '8px', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                  <strong style={{ fontSize: '0.9rem', color: 'var(--text-primary)' }}>{label}</strong>
+                  {(currentSize || currentFamily || currentStyles.bold || currentStyles.italic || currentStyles.underline || currentColor) && (
+                    <button 
+                      type="button"
+                      className="btn btn-icon btn-secondary" 
+                      title="Reset section styling"
+                      onClick={() => {
+                        const sizes = { ...(resume.settings?.sectionFontSizes || {}) };
+                        const families = { ...(resume.settings?.sectionFontFamilies || {}) };
+                        const styles = { ...(resume.settings?.sectionStyles || {}) };
+                        const colors = { ...(resume.settings?.sectionColors || {}) };
+                        delete sizes[key]; delete families[key]; delete styles[key]; delete colors[key];
+                        updateField('settings.sectionFontSizes', sizes);
+                        updateField('settings.sectionFontFamilies', families);
+                        updateField('settings.sectionStyles', styles);
+                        updateField('settings.sectionColors', colors);
+                      }}
+                      style={{ padding: '2px 8px', fontSize: '0.7rem' }}
+                    >
+                      <i className="fas fa-undo"></i> Reset
+                    </button>
+                  )}
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', alignItems: 'center' }}>
+                  {/* 1. Font Size */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Size:</span>
+                    <input
+                      type="range"
+                      min="8" max="14" step="0.5"
+                      value={currentSize || '10'}
+                      onChange={e => {
+                        if (!resume.settings) updateField('settings', {});
+                        if (!resume.settings?.sectionFontSizes) updateField('settings.sectionFontSizes', {});
+                        updateField(`settings.sectionFontSizes.${key}`, e.target.value);
+                      }}
+                      style={{ width: '70px', cursor: 'pointer' }}
+                    />
+                    <span style={{ fontSize: '0.75rem', width: '32px', textAlign: 'right' }}>{currentSize || '10'}pt</span>
+                  </div>
+
+                  {/* 2. Font Family */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Font:</span>
+                    <select
+                      className="form-input"
+                      style={{ padding: '4px 8px', fontSize: '0.75rem', width: '115px', height: '28px' }}
+                      value={currentFamily}
+                      onChange={e => {
+                        if (!resume.settings) updateField('settings', {});
+                        if (!resume.settings?.sectionFontFamilies) updateField('settings.sectionFontFamilies', {});
+                        updateField(`settings.sectionFontFamilies.${key}`, e.target.value);
+                      }}
+                    >
+                      <option value="">Theme Default</option>
+                      <option value="Inter, sans-serif">Inter</option>
+                      <option value="'Roboto', sans-serif">Roboto</option>
+                      <option value="'Outfit', sans-serif">Outfit</option>
+                      <option value="Georgia, serif">Georgia</option>
+                      <option value="'Courier New', monospace">Courier New</option>
+                      <option value="'Playfair Display', serif">Playfair Display</option>
+                      <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+                    </select>
+                  </div>
+
+                  {/* 3. Bold / Italic / Underline */}
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <button
+                      type="button"
+                      className={`btn btn-xs ${currentStyles.bold ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ padding: '2px 8px', fontWeight: 'bold', height: '28px' }}
+                      onClick={() => {
+                        if (!resume.settings) updateField('settings', {});
+                        if (!resume.settings?.sectionStyles) updateField('settings.sectionStyles', {});
+                        updateField(`settings.sectionStyles.${key}.bold`, !currentStyles.bold);
+                      }}
+                      title="Bold"
+                    >
+                      B
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn btn-xs ${currentStyles.italic ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ padding: '2px 8px', fontStyle: 'italic', height: '28px' }}
+                      onClick={() => {
+                        if (!resume.settings) updateField('settings', {});
+                        if (!resume.settings?.sectionStyles) updateField('settings.sectionStyles', {});
+                        updateField(`settings.sectionStyles.${key}.italic`, !currentStyles.italic);
+                      }}
+                      title="Italic"
+                    >
+                      I
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn btn-xs ${currentStyles.underline ? 'btn-primary' : 'btn-secondary'}`}
+                      style={{ padding: '2px 8px', textDecoration: 'underline', height: '28px' }}
+                      onClick={() => {
+                        if (!resume.settings) updateField('settings', {});
+                        if (!resume.settings?.sectionStyles) updateField('settings.sectionStyles', {});
+                        updateField(`settings.sectionStyles.${key}.underline`, !currentStyles.underline);
+                      }}
+                      title="Underline"
+                    >
+                      U
+                    </button>
+                  </div>
+
+                  {/* 4. Text Color */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Color:</span>
+                    <input
+                      type="color"
+                      value={currentColor || '#000000'}
+                      onChange={e => {
+                        if (!resume.settings) updateField('settings', {});
+                        if (!resume.settings?.sectionColors) updateField('settings.sectionColors', {});
+                        updateField(`settings.sectionColors.${key}`, e.target.value);
+                      }}
+                      style={{ width: '28px', height: '26px', padding: 0, border: '1px solid var(--border-subtle)', borderRadius: '4px', cursor: 'pointer', background: 'transparent' }}
+                      title="Section color"
+                    />
+                  </div>
+                </div>
               </div>
             );
           })}

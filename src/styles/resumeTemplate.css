@@ -1,3 +1,6 @@
+@import url('https://fonts.cdnfonts.com/css/latin-modern-roman');
+@import url('https://fonts.cdnfonts.com/css/latin-modern-math');
+
 /* ===================================================================
    Resume Template CSS — Multiple Themes Support
    =================================================================== */
@@ -6,12 +9,43 @@
 .resume-page {
   width: 8.5in;
   min-height: 11in;
+  height: auto;
   background: #ffffff;
   color: #222222;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   box-sizing: border-box;
+}
+
+.page-break-indicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: repeating-linear-gradient(90deg, #ef4444 0, #ef4444 8px, transparent 8px, transparent 16px);
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.page-break-indicator span {
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  font-family: sans-serif;
+}
+@media print {
+  .no-print, .page-break-indicator {
+    display: none !important;
+  }
 }
 
 /* ===================================================================
@@ -87,6 +121,90 @@
 .theme-latex .resume-link { color: rgb(0, 123, 255); text-decoration: none; }
 .theme-latex .resume-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16pt; }
 .theme-latex .resume-two-col .resume-list { margin: 0; }
+
+/* ===================================================================
+   THEME: Professional (Exact LaTeX Replica - Latin Modern Roman)
+   =================================================================== */
+.theme-professional {
+  padding: 0.4in 0.5in;
+  font-family: var(--theme-font, 'Latin Modern Roman', 'Computer Modern Serif', 'Times New Roman', Georgia, serif);
+  font-size: 10pt;
+  line-height: 1.35;
+  color: #000000;
+  background: #ffffff;
+}
+.theme-professional .resume-name {
+  text-align: center;
+  font-size: 24.88pt;
+  font-weight: 700;
+  color: #282828 !important;
+  margin-bottom: 6pt;
+  letter-spacing: 0;
+}
+.theme-professional .resume-contact {
+  text-align: center;
+  font-size: 9pt;
+  font-weight: 400;
+  color: #000000;
+  margin-bottom: 10pt;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.theme-professional .contact-item, .theme-professional .resume-contact .contact-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #000000;
+  font-size: 9pt;
+  font-weight: 400;
+}
+.theme-professional .contact-item i, .theme-professional .resume-contact .contact-item i, .theme-professional .resume-contact i {
+  font-size: 9pt !important;
+  color: #000000 !important;
+  opacity: 1 !important;
+}
+.theme-professional .contact-item a, .theme-professional .contact-item span, .theme-professional .resume-contact .contact-item a, .theme-professional .resume-contact .contact-item span {
+  color: #007bff !important;
+  text-decoration: none !important;
+  font-size: 9pt;
+  font-weight: 400;
+}
+.theme-professional .contact-sep, .theme-professional .resume-contact .contact-sep {
+  margin: 0 10px !important;
+  color: #000000 !important;
+}
+.theme-professional .resume-section-title {
+  font-size: 14.4pt;
+  font-weight: 700;
+  font-variant: small-caps;
+  color: #0056b3 !important;
+  letter-spacing: 0.5pt;
+  border-bottom: 1.2px solid #0056b3 !important;
+  padding-bottom: 2pt;
+  margin-top: 8pt;
+  margin-bottom: 4pt;
+  text-transform: none;
+}
+.theme-professional .resume-list { list-style: disc; padding-left: 14pt; margin: 0; }
+.theme-professional .resume-list > li { margin-bottom: 2pt; font-size: 10pt; font-weight: 400; color: #000000; line-height: 1.35; }
+.theme-professional .resume-list > li + li { margin-top: 1pt; }
+.theme-professional .resume-item-header { display: flex; justify-content: space-between; align-items: baseline; }
+.theme-professional .resume-item-title { font-weight: 700; font-size: 10pt; color: #000000; }
+.theme-professional strong { font-weight: 700; font-size: 10pt; color: #000000; }
+.theme-professional .resume-item-date { font-style: italic; font-size: 10pt; font-weight: 400; white-space: nowrap; color: #000000; }
+.theme-professional .resume-item-subtitle { display: block; margin-top: 1pt; font-size: 10pt; font-weight: 400; font-style: normal; color: #000000; }
+.theme-professional .resume-item-note { font-size: 10pt; font-weight: 400; font-style: normal; color: #000000; display: block; margin-top: 1pt; }
+.theme-professional .resume-sublist { list-style: disc; padding-left: 14pt; margin: 1pt 0 0 0; }
+.theme-professional .resume-sublist > li { font-size: 10pt; font-weight: 400; color: #000000; margin-bottom: 1pt; line-height: 1.35; }
+.theme-professional .resume-skill-sub { padding-left: 14pt; list-style: disc; margin: 0; }
+.theme-professional .resume-skill-sub > li { font-size: 10pt; font-weight: 400; color: #000000; line-height: 1.35; margin-bottom: 0; }
+.theme-professional .resume-link, .theme-professional a { color: #007bff; text-decoration: underline; font-weight: 400; font-size: inherit; }
+.theme-professional .resume-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16pt; }
+.theme-professional .resume-two-col .resume-list { margin: 0; }
+.theme-professional em, .theme-professional i, .theme-professional .math { font-style: italic; font-family: 'Latin Modern Math', 'Latin Modern Roman', serif; }
 
 /* ===================================================================
    THEME: Modern (Clean Sans-Serif, Color Accents)
